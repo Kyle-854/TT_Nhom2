@@ -1,0 +1,12 @@
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\bin\Debug\net8.0\HotelBooking.Shared.deps.json
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\bin\Debug\net8.0\HotelBooking.Shared.dll
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\bin\Debug\net8.0\HotelBooking.Shared.pdb
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.GeneratedMSBuildEditorConfig.editorconfig
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.AssemblyInfoInputs.cache
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.AssemblyInfo.cs
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.csproj.CoreCompileInputs.cache
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.sourcelink.json
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.dll
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\refint\HotelBooking.Shared.dll
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\HotelBooking.Shared.pdb
+D:\TAILIEU\NAM4\HK1\ThucTapChuyenNganh\Github\TT_Nhom2\backend\src\HotelBooking.Shared\obj\Debug\net8.0\ref\HotelBooking.Shared.dll
