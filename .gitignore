@@ -1,0 +1,58 @@
+# ============================================
+# ASP.NET WEB API / .NET CORE BACKEND IGNORE
+# ============================================
+
+# Build output
+backend/src/**/bin/
+backend/src/**/obj/
+backend/tests/**/bin/
+backend/tests/**/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio files
+.vs/
+*.ncb
+*.aps
+*.res
+*.opendb
+
+# Backup & logs
+*.log
+*.tmp
+*.bak
+
+# Publish output
+backend/**/publish/
+backend/**/out/
+
+# Configuration 
+backend/src/HotelBooking.API/appsettings.Development.json
+backend/src/HotelBooking.API/appsettings.json
+
+# NuGet packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuspec
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.exe
+*.dll
+
+# Rider / VS Code / JetBrains
+.idea/
+.vscode/
+*.code-workspace
+
+# System files
+.DS_Store
+Thumbs.db
