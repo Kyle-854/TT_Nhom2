@@ -19,6 +19,8 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetMyProfile()
         {
             long userId = GetUserIdFromClaims();
@@ -29,6 +31,7 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("me")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateMyProfile([FromBody] UserProfileUpdateDto dto)
         {
             long userId = GetUserIdFromClaims();

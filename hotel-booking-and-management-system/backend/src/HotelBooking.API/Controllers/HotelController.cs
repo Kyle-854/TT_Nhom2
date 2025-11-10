@@ -1,4 +1,5 @@
-﻿using HotelBooking.Application.DataTransferObjects.Hotel;
+﻿using HotelBooking.API.Middlewares;
+using HotelBooking.Application.DataTransferObjects.Hotel;
 using HotelBooking.Application.DataTransferObjects.RoomType;
 using HotelBooking.Application.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +26,8 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet("{id:long}")]
-        [ProducesResponseType(typeof(HotelDetailDto), 200)] 
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(HotelDetailDto), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetHotelById(long id)
         {
             HotelDetailDto? hotelDetail = await _hotelService.GetHotelDetailByIdAsync(id);

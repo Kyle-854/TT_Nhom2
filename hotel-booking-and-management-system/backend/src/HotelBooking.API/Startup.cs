@@ -45,6 +45,7 @@ namespace HotelBooking.API
             services.AddAutoMapper(typeof(UserProfile).Assembly);
             services.AddAutoMapper(typeof(HotelProfile).Assembly);
             services.AddAutoMapper(typeof(BookingProfile).Assembly);
+            services.AddAutoMapper(typeof(ReviewProfile).Assembly);
 
             services.AddScoped<JwtTokenGenerator>();
 
@@ -52,6 +53,7 @@ namespace HotelBooking.API
             services.AddScoped<BookingService>();
             services.AddScoped<HotelService>();
             services.AddScoped<UserService>();
+            services.AddScoped<ReviewService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -18,14 +18,21 @@ namespace HotelBooking.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<BookingDetailDto> CreateBookingAsync( CreateBookingRequestDto request, long customerUserId)
+        public async Task<BookingDetailDto> CreateBookingAsync(CreateBookingRequestDto request, long customerUserId)
         {
-            if (request.Rooms == null || !request.Rooms.Any())
+            Hotel? existHotel = await _unitOfWork.HotelRepo.GetByIdAsync(request.HotelId);
+
+            if (existHotel == null)
             {
-                throw new ArgumentException("Booking request must contain at least one room.");
+                throw new KeyNotFoundException($"Không tìm thấy khách sạn có ID {request.HotelId}.");
             }
 
-            DataTable bookingRoomsTable = CreateBookingRoomTypeTVP(request.Rooms);
+            if (request.Rooms == null || !request.Rooms.Any())
+            {
+                throw new InvalidOperationException("Yêu cầu đặt phòng phải có ít nhất một phòng.");
+            }
+
+            DataTable bookingRoomsTable = await CreateBookingRoomTypeTVP(request.Rooms);
 
             const string currency = "VND";
             const decimal commissionPct = 10.0m;
@@ -44,19 +51,19 @@ namespace HotelBooking.Application.Services
 
                 if (newBookingId <= 0)
                 {
-                    throw new Exception("Failed to create booking, SP returned invalid ID.");
+                    throw new InvalidOperationException("Không tạo được đặt chỗ, SP trả về ID không hợp lệ.");
                 }
             }
             catch (Exception ex)
             {
-                throw new ValidationException($"Booking failed: {ex.Message}");
+                throw new InvalidOperationException("Đã xảy ra lỗi khi tạo đặt chỗ.", ex);
             }
 
             BookingDetailDto? createdBookingDetails = await GetBookingDetailsAsync(newBookingId, customerUserId);
 
             if (createdBookingDetails == null)
             {
-                throw new KeyNotFoundException($"Successfully created booking (ID: {newBookingId}) but failed to retrieve its details.");
+                throw new KeyNotFoundException($"Đã tạo thành công đặt chỗ (ID: {newBookingId}) nhưng không lấy được thông tin chi tiết.");
             }
 
             return createdBookingDetails;
@@ -75,14 +82,14 @@ namespace HotelBooking.Application.Services
 
             if (booking == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Không tìm thấy đặt chỗ có ID {bookingId} cho UserID {customerUserId}.");
             }
 
             return _mapper.Map<BookingDetailDto>(booking);
         }
 
 
-        private DataTable CreateBookingRoomTypeTVP(List<BookingRoomRequestDto> rooms)
+        private async Task<DataTable> CreateBookingRoomTypeTVP(List<BookingRoomRequestDto> rooms)
         {
             DataTable table = new DataTable();
             table.Columns.Add("RoomTypeId", typeof(int));
@@ -92,9 +99,16 @@ namespace HotelBooking.Application.Services
 
             foreach (BookingRoomRequestDto room in rooms)
             {
+                RoomType? existRoomType = await _unitOfWork.RoomTypeRepo.GetByIdAsync(room.RoomTypeId);
+
+                if (existRoomType == null)
+                {
+                    throw new InvalidOperationException($"Không tìm thấy loại phòng có ID {room.RoomTypeId}");
+                }    
+
                 if (room.CheckOutDate <= room.CheckInDate || room.Quantity <= 0)
                 {
-                    throw new ArgumentException($"Invalid data for RoomTypeId {room.RoomTypeId}: CheckOut must be after CheckIn and Quantity > 0.");
+                    throw new InvalidOperationException($"Dữ liệu không hợp lệ cho RoomTypeId {room.RoomTypeId}: Ngày CheckOut phải nhỏ hơn CheckIn và Quantity phải > 0.");
                 }
 
                 table.Rows.Add(

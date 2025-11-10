@@ -51,6 +51,7 @@ namespace HotelBooking.API.Controllers
         [HttpPut("change-password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> ChangePassword([FromBody] UserPasswordUpdateDto request)
         {
@@ -72,6 +73,7 @@ namespace HotelBooking.API.Controllers
         [Authorize]
         [HttpGet("user-info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult GetUserInfo()
         {
             string? email = User.FindFirst(ClaimTypes.Email)?.Value;

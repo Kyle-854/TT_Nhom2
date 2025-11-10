@@ -53,11 +53,6 @@ namespace HotelBooking.API.Controllers
 
             BookingDetailDto? bookingDetail = await _bookingService.GetBookingDetailsAsync(id, customerUserId);
 
-            if (bookingDetail == null)
-            {
-                return NotFound(new { message = "Booking not found or you do not have permission to view it." });
-            }
-
             return Ok(bookingDetail);
         }
 

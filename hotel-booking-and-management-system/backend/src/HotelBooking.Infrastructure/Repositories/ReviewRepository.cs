@@ -25,5 +25,18 @@ namespace HotelBooking.Infrastructure.Repositories
                               .OrderByDescending(r => r.CreatedAt)
                               .ToListAsync();
         }
+
+        public async Task<Review?> GetReviewByIdWithCustomerAsync(long reviewId)
+        {
+            return await _context.Reviews
+                .Include(r => r.CustomerUser)
+                .FirstOrDefaultAsync(r => r.ReviewId == reviewId);
+        }
+
+        public async Task<bool> CheckIfBookingHasReviewAsync(long bookingId)
+        {
+            return await _context.Reviews
+                .AnyAsync(r => r.BookingId == bookingId);
+        }
     }
 }

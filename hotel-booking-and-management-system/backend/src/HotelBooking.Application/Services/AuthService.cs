@@ -58,21 +58,21 @@ namespace HotelBooking.Application.Services
 
             if (user == null || user.PasswordHash == null || !user.IsActive)
             {
-                throw new InvalidOperationException("Email/số điện thoại hoặc mật khẩu không chính xác.");
+                throw new UnauthorizedAccessException("Email/số điện thoại hoặc mật khẩu không chính xác.");
             }
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isPasswordValid)
             {
-                throw new InvalidOperationException("Email/số điện thoại hoặc mật khẩu không chính xác.");
+                throw new UnauthorizedAccessException("Email/số điện thoại hoặc mật khẩu không chính xác.");
             }
 
             Role? userRole = await _unitOfWork.RoleRepo.GetByIdAsync(user.RoleId);
 
             if (userRole == null)
             {
-                throw new InvalidOperationException($"Lỗi hệ thống: Không tìm thấy RoleId {user.RoleId} được gán cho người dùng.");
+                throw new UnauthorizedAccessException($"Lỗi hệ thống: Không tìm thấy RoleId {user.RoleId} được gán cho người dùng.");
             }
             user.Role = userRole!;
 
