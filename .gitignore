@@ -31,8 +31,8 @@ backend/**/publish/
 backend/**/out/
 
 # Configuration 
-backend/src/HotelBooking.API/appsettings.Development.json
-backend/src/HotelBooking.API/appsettings.json
+hotel-booking-and-management-system/backend/src/HotelBooking.API/appsettings.Development.json
+hotel-booking-and-management-system/backend/src/HotelBooking.API/appsettings.json
 
 # NuGet packages
 *.nupkg
@@ -56,3 +56,35 @@ backend/src/HotelBooking.API/appsettings.json
 # System files
 .DS_Store
 Thumbs.db
+
+# ==========================
+# FRONTEND (React)
+# ==========================
+
+# Node modules
+hotel-booking-and-management-system/frontend/node_modules/
+
+# Build output
+hotel-booking-and-management-system/frontend/dist/
+hotel-booking-and-management-system/frontend/build/
+
+# Environment files
+hotel-booking-and-management-system/frontend/.env
+hotel-booking-and-management-system/frontend/.env.local
+hotel-booking-and-management-system/frontend/.env.*.local
+
+# Logs
+hotel-booking-and-management-system/frontend/npm-debug.log*
+hotel-booking-and-management-system/frontend/yarn-debug.log*
+hotel-booking-and-management-system/frontend/yarn-error.log*
+hotel-booking-and-management-system/frontend/pnpm-debug.log*
+hotel-booking-and-management-system/frontend/logs/
+
+# Temp files
+hotel-booking-and-management-system/frontend/.cache/
+hotel-booking-and-management-system/frontend/.parcel-cache/
+hotel-booking-and-management-system/frontend/.vite/
+hotel-booking-and-management-system/frontend/.next/
+
+# System
+hotel-booking-and-management-system/frontend/.DS_Store
