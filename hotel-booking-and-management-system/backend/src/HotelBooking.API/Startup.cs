@@ -31,9 +31,12 @@ namespace HotelBooking.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Database
-            services.AddDbContext<HotelBookingDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
-            ));
+            services.AddDbContext<HotelBookingDbContext>(options =>
+            options.UseMySql(
+                Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(Configuration.GetConnectionString("DefaultConnection"))
+                )
+            );
 
             // JwtSettings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
@@ -46,6 +49,7 @@ namespace HotelBooking.API
             services.AddAutoMapper(typeof(HotelProfile).Assembly);
             services.AddAutoMapper(typeof(BookingProfile).Assembly);
             services.AddAutoMapper(typeof(ReviewProfile).Assembly);
+            services.AddAutoMapper(typeof(PaymentProfile).Assembly);
 
             services.AddScoped<JwtTokenGenerator>();
 
@@ -54,6 +58,7 @@ namespace HotelBooking.API
             services.AddScoped<HotelService>();
             services.AddScoped<UserService>();
             services.AddScoped<ReviewService>();
+            services.AddScoped<PaymentService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -65,6 +70,7 @@ namespace HotelBooking.API
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
             services.AddScoped<IRoomInventoryRepository, RoomInventoryRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 
             services.AddControllers().AddJsonOptions(options =>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace HotelBooking.Domain.Entities;
-
 public partial class User
 {
     public long UserId { get; set; }
@@ -15,13 +14,13 @@ public partial class User
 
     public string? Phone { get; set; }
 
-    public byte RoleId { get; set; }
+    public sbyte RoleId { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
 

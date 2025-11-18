@@ -12,5 +12,7 @@ namespace HotelBooking.Application.DataTransferObjects.Booking
         public List<BookingRoomRequestDto> Rooms { get; set; } = new();
 
         public string? Note { get; set; }
+
+        public string? PromotionCode { get; set; }
     }
 }

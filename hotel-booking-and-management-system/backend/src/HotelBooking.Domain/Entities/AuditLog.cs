@@ -15,7 +15,7 @@ public partial class AuditLog
 
     public long? PerformedBy { get; set; }
 
-    public DateTimeOffset PerformedAt { get; set; }
+    public DateTime PerformedAt { get; set; }
 
     public string? DataBefore { get; set; }
 

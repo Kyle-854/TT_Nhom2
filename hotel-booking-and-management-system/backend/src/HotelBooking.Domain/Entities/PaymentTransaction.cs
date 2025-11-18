@@ -17,11 +17,11 @@ public partial class PaymentTransaction
 
     public string Currency { get; set; } = null!;
 
-    public byte StatusId { get; set; }
+    public sbyte StatusId { get; set; }
 
-    public DateTimeOffset? PaidAt { get; set; }
+    public DateTime? PaidAt { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public string? Note { get; set; }
 

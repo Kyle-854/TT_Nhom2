@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace HotelBooking.Domain.Entities;
-
 public partial class BookingRoom
 {
     public long BookingRoomId { get; set; }
@@ -23,7 +22,7 @@ public partial class BookingRoom
 
     public decimal SubTotal { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual Booking Booking { get; set; } = null!;
 

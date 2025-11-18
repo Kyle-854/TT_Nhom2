@@ -11,7 +11,7 @@ public partial class Invoice
 
     public string InvoiceNumber { get; set; } = null!;
 
-    public DateTimeOffset IssuedAt { get; set; }
+    public DateTime IssuedAt { get; set; }
 
     public decimal AmountBeforeTax { get; set; }
 

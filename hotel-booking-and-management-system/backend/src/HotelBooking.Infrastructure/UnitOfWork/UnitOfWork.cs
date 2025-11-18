@@ -18,8 +18,8 @@ namespace HotelBooking.Infrastructure.UnitOfWork
         private IReviewRepository _reviewrepo;
         private IPromotionRepository _promotionrepo;
         private IRoleRepository _rolerepo;
+        private IPaymentRepository _paymentrepo;
 
-        private IGenericRepository<PaymentTransaction> _paymentTransactions;
         private IGenericRepository<Invoice> _invoices;
         private IGenericRepository<Media> _medias;
         private IGenericRepository<HotelPaymentSettlement> _hotelPaymentSettlements;
@@ -129,15 +129,15 @@ namespace HotelBooking.Infrastructure.UnitOfWork
             }
         }
 
-        public IGenericRepository<PaymentTransaction> PaymentTransactions
+        public IPaymentRepository PaymentRepo
         {
             get
             {
-                if (this._paymentTransactions == null)
+                if (this._paymentrepo == null)
                 {
-                    this._paymentTransactions = new GenericRepository<PaymentTransaction>(_context);
+                    this._paymentrepo = new PaymentRepository(_context);
                 }
-                return this._paymentTransactions;
+                return this._paymentrepo;
             }
         }
 

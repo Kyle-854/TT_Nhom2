@@ -47,7 +47,7 @@ namespace HotelBooking.Application.Services
 
             user.FullName = dto.FullName;
             user.Phone = dto.Phone;
-            user.UpdatedAt = DateTimeOffset.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.UserRepo.Update(user);
 

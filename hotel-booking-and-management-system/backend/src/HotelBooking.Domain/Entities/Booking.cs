@@ -15,19 +15,23 @@ public partial class Booking
 
     public decimal TotalAmount { get; set; }
 
+    public decimal DiscountAmount { get; set; }
+
     public string Currency { get; set; } = null!;
 
     public decimal CommissionPct { get; set; }
 
     public decimal CommissionAmount { get; set; }
 
-    public byte StatusId { get; set; }
+    public sbyte StatusId { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public string? Note { get; set; }
+
+    public long? PromotionId { get; set; }
 
     public virtual ICollection<BookingRoom> BookingRooms { get; set; } = new List<BookingRoom>();
 
@@ -38,6 +42,8 @@ public partial class Booking
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+
+    public virtual Promotion? Promotion { get; set; }
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 

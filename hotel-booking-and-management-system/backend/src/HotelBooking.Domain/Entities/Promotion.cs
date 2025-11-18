@@ -19,13 +19,15 @@ public partial class Promotion
 
     public decimal? DiscountFixed { get; set; }
 
-    public DateTimeOffset? StartAt { get; set; }
+    public DateTime? StartAt { get; set; }
 
-    public DateTimeOffset? EndAt { get; set; }
+    public DateTime? EndAt { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual Hotel? Hotel { get; set; }
 }

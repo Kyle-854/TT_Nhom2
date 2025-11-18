@@ -14,7 +14,7 @@ namespace HotelBooking.Application.Services
         private readonly IMapper _mapper;
 
         private const string DEFAULT_USER_ROLE_NAME = "Customer";
-        private const byte DEFAULT_USER_ROLE_ID = 2;
+        private const sbyte DEFAULT_USER_ROLE_ID = 2;
 
         public AuthService(IUnitOfWork unitOfWork, JwtTokenGenerator jwtTokenGenerator, IMapper mapper)
         {
@@ -37,14 +37,14 @@ namespace HotelBooking.Application.Services
 
             Role? userRole = await _unitOfWork.RoleRepo.GetByRoleNameAsync(DEFAULT_USER_ROLE_NAME);
 
-            byte roleId = userRole?.RoleId ?? DEFAULT_USER_ROLE_ID;
+            sbyte roleId = userRole?.RoleId ?? DEFAULT_USER_ROLE_ID;
 
             User? newUser = _mapper.Map<User>(request);
 
             newUser.UserId = 0; 
             newUser.RoleId = roleId;
             newUser.IsActive = true;
-            newUser.CreatedAt = DateTimeOffset.UtcNow;
+            newUser.CreatedAt = DateTime.UtcNow;
 
             newUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
@@ -56,7 +56,7 @@ namespace HotelBooking.Application.Services
         {
             User? user = await _unitOfWork.UserRepo.GetByEmailOrPhoneNumberAsync(request.EmailOrPhoneNumber);
 
-            if (user == null || user.PasswordHash == null || !user.IsActive)
+            if (user == null || user.PasswordHash == null || user.IsActive != true)
             {
                 throw new UnauthorizedAccessException("Email/số điện thoại hoặc mật khẩu không chính xác.");
             }
@@ -105,7 +105,7 @@ namespace HotelBooking.Application.Services
             }
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-            user.UpdatedAt = DateTimeOffset.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.UserRepo.Update(user);
             await _unitOfWork.CompleteAsync();

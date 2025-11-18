@@ -13,8 +13,8 @@ namespace HotelBooking.Application.Interfaces.UnitOfWork
         IReviewRepository ReviewRepo { get; }
         IPromotionRepository PromotionRepo { get; }
         IRoleRepository RoleRepo { get; }
+        IPaymentRepository PaymentRepo { get; }
 
-        IGenericRepository<PaymentTransaction> PaymentTransactions { get; }
         IGenericRepository<Invoice> Invoices { get; }
         IGenericRepository<Media> Medias { get; }
         IGenericRepository<HotelPaymentSettlement> HotelPaymentSettlements { get; }

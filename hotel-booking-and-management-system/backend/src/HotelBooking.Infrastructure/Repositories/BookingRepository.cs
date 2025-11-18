@@ -1,8 +1,9 @@
 ﻿using HotelBooking.Application.Interfaces.Repositories;
 using HotelBooking.Domain.Entities;
 using HotelBooking.Infrastructure.Persistence;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace HotelBooking.Infrastructure.Repositories
@@ -67,39 +68,33 @@ namespace HotelBooking.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<long> CreateBookingViaSPAsync(long customerUserId, long hotelId, DataTable bookingRooms, string currency, decimal commissionPct)
+        public async Task<long> CreateBookingViaSPAsync(long customerUserId, long hotelId, DataTable bookingRooms, string currency, decimal commissionPct, string? note, string? promotionCode)
         {
-            SqlParameter tvpParam = new SqlParameter
-            {
-                ParameterName = "@BookingRooms",
-                SqlDbType = SqlDbType.Structured,
-                Value = bookingRooms,
-                TypeName = "dbo.BookingRoomType"
-            };
+            string bookingRoomsJson = JsonConvert.SerializeObject(bookingRooms);
 
-            SqlParameter outBookingIdParam = new SqlParameter
-            {
-                ParameterName = "@OutBookingId",
-                SqlDbType = SqlDbType.BigInt,
-                Direction = ParameterDirection.Output
-            };
+            MySqlParameter customerParam = new MySqlParameter("@CustomerUserId", customerUserId);
+            MySqlParameter hotelParam = new MySqlParameter("@HotelId", hotelId);
+            MySqlParameter bookingRoomsParam = new MySqlParameter("@BookingRoomsJson", bookingRoomsJson);
+            MySqlParameter currencyParam = new MySqlParameter("@Currency", currency);
+            MySqlParameter commissionParam = new MySqlParameter("@CommissionPct", commissionPct);
+            MySqlParameter noteParam = new MySqlParameter("@Note", note ?? (object)DBNull.Value);
+            MySqlParameter promoParam = new MySqlParameter("@PromotionCode", promotionCode ?? (object)DBNull.Value);
 
-            SqlParameter customerParam = new SqlParameter("@CustomerUserId", customerUserId);
-            SqlParameter hotelParam = new SqlParameter("@HotelId", hotelId);
-            SqlParameter currencyParam = new SqlParameter("@Currency", currency);
-            SqlParameter commissionParam = new SqlParameter("@CommissionPct", commissionPct);
+            List<long> results = await _context.Database
+                .SqlQuery<long>($"CALL sp_CreateBooking({customerParam}, {hotelParam}, {bookingRoomsParam}, {currencyParam}, {commissionParam}, {noteParam}, {promoParam})")
+                .ToListAsync();
 
-            await _context.Database.ExecuteSqlRawAsync(
-                "EXEC dbo.sp_CreateBooking @CustomerUserId, @HotelId, @BookingRooms, @Currency, @CommissionPct, @OutBookingId OUTPUT",
-                customerParam,
-                hotelParam,
-                tvpParam,
-                currencyParam,
-                commissionParam,
-                outBookingIdParam
-            );
+            return results.FirstOrDefault();
+        }
 
-            return (long)outBookingIdParam.Value;
+        public async Task<Booking?> GetBookingWithStatusAndPaymentsAsync(long bookingId)
+        {
+            return await _context.Bookings
+                .AsNoTracking()
+                .Include(b => b.Status)
+                .Include(b => b.PaymentTransactions)
+                    .ThenInclude(p => p.Status)
+                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
         }
     }
 }

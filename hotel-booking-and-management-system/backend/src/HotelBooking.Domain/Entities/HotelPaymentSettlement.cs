@@ -23,7 +23,7 @@ public partial class HotelPaymentSettlement
 
     public decimal PayableToHotel { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual Hotel Hotel { get; set; } = null!;
 }
