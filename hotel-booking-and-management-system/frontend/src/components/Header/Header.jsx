@@ -9,12 +9,12 @@ const Header = ({ onLogin }) => {
   const [isConfirmationSuccessOpen, setIsConfirmationSuccessOpen] = useState(false);
 
   // State cho form đăng nhập
-  const [emailOrPhone, setEmailOrPhone] = useState('');
+  const [emailOrPhoneNumber, setEmailOrPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLoginSubmit = (e) => {
     e.preventDefault(); // Ngăn form submit và tải lại trang
-    onLogin(emailOrPhone, password); // Gọi hàm onLogin từ App.jsx
+    onLogin(emailOrPhoneNumber, password); // Gọi hàm onLogin từ App.jsx
     setIsLoginOpen(false); // Đóng dialog sau khi đăng nhập
   };
 
@@ -97,8 +97,8 @@ const Header = ({ onLogin }) => {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email hoặc số điện thoại</label>
                 <input
                   type="text" id="email"
-                  value={emailOrPhone}
-                  onChange={(e) => setEmailOrPhone(e.target.value)}
+                  value={emailOrPhoneNumber}
+                  onChange={(e) => setEmailOrPhoneNumber(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -146,21 +146,13 @@ const Header = ({ onLogin }) => {
             </button>
             <h2 className="text-2xl font-bold text-center mb-6">Đăng ký</h2>
             <form className="grid grid-cols-1 sm:grid-cols-5 gap-x-4 gap-y-4">
-              <div className="sm:col-span-3">
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Họ và tên lót</label>
-                <input type="text" id="lastName" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">Tên</label>
-                <input type="text" id="firstName" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
               <div className="sm:col-span-5">
-                <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
-                <input type="date" id="dob" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+                <input type="text" id="fullName" name="fullName" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div className="sm:col-span-5">
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
-                <input type="tel" id="phone" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="tel" id="phone" name="phone" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div className="sm:col-span-5">
                 <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -168,11 +160,11 @@ const Header = ({ onLogin }) => {
               </div>
               <div className="sm:col-span-5">
                 <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-                <input type="password" id="register-password" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="password" id="register-password" name="password" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div className="sm:col-span-5">
                 <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu</label>
-                <input type="password" id="confirm-password" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="password" id="confirm-password" name="confirmPassword" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <button type="submit" className="sm:col-span-5 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-2">Đăng ký</button>
               <p className="sm:col-span-5 text-sm text-center text-gray-600 mt-2">
