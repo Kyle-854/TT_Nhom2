@@ -73,7 +73,7 @@ namespace HotelBooking.Application.Services
             newReview.CustomerUserId = customerId;
             newReview.HotelId = booking.HotelId;
             newReview.IsPublished = true;
-            newReview.CreatedAt = DateTimeOffset.UtcNow;
+            newReview.CreatedAt = DateTime.UtcNow;
 
             await _uow.ReviewRepo.AddAsync(newReview);
             await _uow.CompleteAsync();

@@ -17,7 +17,7 @@ public partial class RoomInventory
 
     public string? Currency { get; set; }
 
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public virtual RoomType RoomType { get; set; } = null!;
 }

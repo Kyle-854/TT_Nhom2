@@ -1,5 +1,7 @@
-﻿namespace HotelBooking.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
+namespace HotelBooking.Domain.Entities;
 public partial class Hotel
 {
     public long HotelId { get; set; }
@@ -22,13 +24,13 @@ public partial class Hotel
 
     public decimal? Longitude { get; set; }
 
-    public byte? StarRating { get; set; }
+    public sbyte? StarRating { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 

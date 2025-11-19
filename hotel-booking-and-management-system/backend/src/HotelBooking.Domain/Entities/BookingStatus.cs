@@ -5,7 +5,7 @@ namespace HotelBooking.Domain.Entities;
 
 public partial class BookingStatus
 {
-    public byte BookingStatusId { get; set; }
+    public sbyte BookingStatusId { get; set; }
 
     public string StatusName { get; set; } = null!;
 

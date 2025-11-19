@@ -18,7 +18,7 @@ namespace HotelBooking.Infrastructure.Repositories
 
             if (!includeUnpublished)
             {
-                query = query.Where(r => r.IsPublished);
+                query = query.Where(r => r.IsPublished == true);
             }
 
             return await query.Include(r => r.CustomerUser)

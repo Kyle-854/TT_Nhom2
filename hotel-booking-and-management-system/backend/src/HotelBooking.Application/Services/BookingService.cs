@@ -46,7 +46,9 @@ namespace HotelBooking.Application.Services
                     request.HotelId,
                     bookingRoomsTable,
                     currency,
-                    commissionPct
+                    commissionPct,
+                    request.Note,
+                    request.PromotionCode
                 );
 
                 if (newBookingId <= 0)
@@ -56,7 +58,7 @@ namespace HotelBooking.Application.Services
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Đã xảy ra lỗi khi tạo đặt chỗ.", ex);
+                throw new InvalidOperationException($"Đã xảy ra lỗi khi tạo đặt chỗ: {ex.Message}", ex);
             }
 
             BookingDetailDto? createdBookingDetails = await GetBookingDetailsAsync(newBookingId, customerUserId);
@@ -111,11 +113,13 @@ namespace HotelBooking.Application.Services
                     throw new InvalidOperationException($"Dữ liệu không hợp lệ cho RoomTypeId {room.RoomTypeId}: Ngày CheckOut phải nhỏ hơn CheckIn và Quantity phải > 0.");
                 }
 
-                table.Rows.Add(
+                table.Rows.Add
+                (
                     room.RoomTypeId,
                     room.CheckInDate.ToDateTime(TimeOnly.MinValue),
                     room.CheckOutDate.ToDateTime(TimeOnly.MinValue),
-                    room.Quantity);
+                    room.Quantity
+                );
             }
 
             return table;

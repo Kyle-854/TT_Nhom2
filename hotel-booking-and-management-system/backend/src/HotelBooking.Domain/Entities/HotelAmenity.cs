@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace HotelBooking.Domain.Entities;
-
 public partial class HotelAmenity
 {
     public long HotelAmenityId { get; set; }
@@ -11,7 +10,7 @@ public partial class HotelAmenity
 
     public int AmenityId { get; set; }
 
-    public DateTimeOffset AddedAt { get; set; }
+    public DateTime AddedAt { get; set; }
 
     public virtual Amenity Amenity { get; set; } = null!;
 

@@ -39,9 +39,9 @@ namespace HotelBooking.Infrastructure.Repositories
         public async Task<Hotel?> GetActiveHotelWithDetailsAsync(long hotelId)
         {
             return await _context.Hotels
-                .Where(h => h.HotelId == hotelId && h.IsActive) 
-                .Include(h => h.RoomTypes.Where(rt => rt.IsActive)) 
-                .Include(h => h.Reviews.Where(r => r.IsPublished)) 
+                .Where(h => h.HotelId == hotelId && h.IsActive == true) 
+                .Include(h => h.RoomTypes.Where(rt => rt.IsActive == true)) 
+                .Include(h => h.Reviews.Where(r => r.IsPublished == true)) 
                 .Include(h => h.Medias)
                 .Include(h => h.HotelAmenities)
                     .ThenInclude(ha => ha.Amenity)
@@ -51,9 +51,9 @@ namespace HotelBooking.Infrastructure.Repositories
         public async Task<IEnumerable<Hotel>> GetActiveHotelsSummaryAsync()
         {
             return await _context.Hotels
-                .Where(h => h.IsActive)
-                .Include(h => h.RoomTypes.Where(rt => rt.IsActive)) 
-                .Include(h => h.Reviews.Where(r => r.IsPublished)) 
+                .Where(h => h.IsActive == true)
+                .Include(h => h.RoomTypes.Where(rt => rt.IsActive == true)) 
+                .Include(h => h.Reviews.Where(r => r.IsPublished == true)) 
                 .Include(h => h.Medias) 
                 .ToListAsync();
         }

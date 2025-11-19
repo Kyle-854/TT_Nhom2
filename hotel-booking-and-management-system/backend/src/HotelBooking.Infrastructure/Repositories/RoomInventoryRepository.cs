@@ -28,7 +28,7 @@ namespace HotelBooking.Infrastructure.Repositories
             if (inventory != null)
             {
                 inventory.AvailableRooms -= quantityToDecrease;
-                inventory.UpdatedAt = DateTimeOffset.UtcNow; 
+                inventory.UpdatedAt = DateTime.UtcNow; 
 
                 _context.RoomInventories.Update(inventory);
             }
@@ -51,7 +51,7 @@ namespace HotelBooking.Infrastructure.Repositories
                     AvailableRooms = roomType.TotalRooms - quantityToDecrease,
                     PriceOverride = null, 
                     Currency = roomType.Currency,
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 await _context.RoomInventories.AddAsync(newInventory);

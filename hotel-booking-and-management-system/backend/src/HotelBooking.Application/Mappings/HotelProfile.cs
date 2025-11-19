@@ -39,27 +39,27 @@ namespace HotelBooking.Application.Mappings
                            opt => opt.MapFrom(src => src.Medias
                                                        .FirstOrDefault(m => m.IsMain).Url))
                 .ForMember(dest => dest.AverageUserRating,
-                           opt => opt.MapFrom(src => src.Reviews.Any(r => r.IsPublished)
-                                                       ? src.Reviews.Where(r => r.IsPublished).Average(r => r.Rating)
+                           opt => opt.MapFrom(src => src.Reviews.Any(r => r.IsPublished == true)
+                                                       ? src.Reviews.Where(r => r.IsPublished == true).Average(r => r.Rating)
                                                        : (double?)null))
                 .ForMember(dest => dest.StartingPrice,
-                           opt => opt.MapFrom(src => src.RoomTypes.Any(rt => rt.IsActive)
-                                                       ? src.RoomTypes.Where(rt => rt.IsActive).Min(rt => rt.DefaultPrice)
+                           opt => opt.MapFrom(src => src.RoomTypes.Any(rt => rt.IsActive == true)
+                                                       ? src.RoomTypes.Where(rt => rt.IsActive == true).Min(rt => rt.DefaultPrice)
                                                        : (decimal?)null));
 
             CreateMap<Hotel, HotelDetailDto>()
                 .ForMember(dest => dest.AverageUserRating,
-                           opt => opt.MapFrom(src => src.Reviews.Any(r => r.IsPublished)
-                                                       ? src.Reviews.Where(r => r.IsPublished).Average(r => r.Rating)
+                           opt => opt.MapFrom(src => src.Reviews.Any(r => r.IsPublished == true)
+                                                       ? src.Reviews.Where(r => r.IsPublished == true).Average(r => r.Rating)
                                                        : (double?)null))
                 .ForMember(dest => dest.ReviewCount,
-                           opt => opt.MapFrom(src => src.Reviews.Count(r => r.IsPublished)))
+                           opt => opt.MapFrom(src => src.Reviews.Count(r => r.IsPublished == true)))
                 .ForMember(dest => dest.Images,
                            opt => opt.MapFrom(src => src.Medias.OrderBy(m => m.SortOrder)))
                 .ForMember(dest => dest.Amenities,
                            opt => opt.MapFrom(src => src.HotelAmenities.Select(ha => ha.Amenity))) 
                 .ForMember(dest => dest.RoomTypes,
-                           opt => opt.MapFrom(src => src.RoomTypes.Where(rt => rt.IsActive)));
+                           opt => opt.MapFrom(src => src.RoomTypes.Where(rt => rt.IsActive == true)));
         }
     }
 }

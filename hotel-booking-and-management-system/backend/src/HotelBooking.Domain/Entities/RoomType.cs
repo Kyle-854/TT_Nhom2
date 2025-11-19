@@ -15,9 +15,9 @@ public partial class RoomType
 
     public string? Description { get; set; }
 
-    public byte MaxAdults { get; set; }
+    public sbyte MaxAdults { get; set; }
 
-    public byte MaxChildren { get; set; }
+    public sbyte MaxChildren { get; set; }
 
     public decimal DefaultPrice { get; set; }
 
@@ -25,9 +25,9 @@ public partial class RoomType
 
     public int TotalRooms { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual ICollection<BookingRoom> BookingRooms { get; set; } = new List<BookingRoom>();
 

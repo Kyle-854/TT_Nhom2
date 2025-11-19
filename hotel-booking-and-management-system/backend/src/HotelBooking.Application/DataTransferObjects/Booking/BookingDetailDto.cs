@@ -5,6 +5,7 @@
         public long BookingId { get; set; }
         public string BookingCode { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
+        public decimal DiscountAmount { get; set; }
         public string Currency { get; set; } = string.Empty;
         public string StatusName { get; set; } = string.Empty;
         public DateTimeOffset CreatedAt { get; set; }

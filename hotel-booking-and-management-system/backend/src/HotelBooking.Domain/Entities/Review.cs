@@ -13,15 +13,15 @@ public partial class Review
 
     public long CustomerUserId { get; set; }
 
-    public byte Rating { get; set; }
+    public sbyte Rating { get; set; }
 
     public string? Title { get; set; }
 
     public string? Content { get; set; }
 
-    public bool IsPublished { get; set; }
+    public bool? IsPublished { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual Booking? Booking { get; set; }
 
