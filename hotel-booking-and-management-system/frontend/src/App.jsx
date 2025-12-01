@@ -10,22 +10,44 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 
 function App() {
-  const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotel', 'admin'
+  const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotelowner', 'admin'
+  const [userFullName, setUserFullName] = useState(''); // Lưu fullName từ login response
   const navigate = useNavigate()
 
-  // Logic đăng nhập giả lập
-  const handleLogin = (emailOrPhoneNumber, password) => {
-    if ((emailOrPhoneNumber === 'hotel@gmail.com' || emailOrPhoneNumber === '0911111111') && password === 'hotel') {
-      setUserRole('hotel');
-    } else if ((emailOrPhoneNumber === 'customer@gmail.com' || emailOrPhoneNumber === '0922222222') && password === 'customer') {
-      setUserRole('customer');
-    } else if ((emailOrPhoneNumber === 'admin@gmail.com' || emailOrPhoneNumber === '0900000000') && password === 'admin') {
-      setUserRole('admin');
+  // Logic đăng nhập từ API backend
+  const handleLogin = (loginResponse) => {
+    // Backend trả về roleName: "HotelOwner" | "Admin" | "Customer"
+    // Path: "/hotelowner", "/admin", "/customer"
+    
+    const roleName = loginResponse?.user?.roleName || loginResponse?.roleName || loginResponse?.user?.role || loginResponse?.role;
+    const fullName = loginResponse?.user?.fullName || loginResponse?.fullName || loginResponse?.user?.name || loginResponse?.name || '';
+    
+    if (roleName) {
+      // Map roleName từ backend sang path
+      let pathRole;
+      const roleNameLower = String(roleName).toLowerCase();
+      
+      if (roleNameLower === 'hotelowner' || roleNameLower === 'hotel') {
+        pathRole = 'hotelowner';
+      } else if (roleNameLower === 'admin') {
+        pathRole = 'admin';
+      } else if (roleNameLower === 'customer') {
+        pathRole = 'customer';
+      } else {
+        console.warn('[App] Vai trò không xác định từ backend:', roleName);
+        return;
+      }
+      
+      setUserFullName(fullName);
+      setUserRole(pathRole);
+    } else {
+      console.warn('[App] Không tìm thấy roleName trong response đăng nhập:', loginResponse);
     }
   };
 
   const handleLogout = () => {
     setUserRole(null);
+    setUserFullName('');
     navigate('/')
   };
 
@@ -50,15 +72,15 @@ function App() {
 //Customer Page
       <Route path="/customer" element={
         <>
-          <HeaderForCustomer onLogout={handleLogout} />
+          <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
           <Content />
         </>
       } />
       
 //Hotel Page
-      <Route path="/hotel" element={
+      <Route path="/hotelowner" element={
         <>
-          <HeaderForHotel onLogout={handleLogout} />
+          <HeaderForHotel onLogout={handleLogout} userFullName={userFullName} />
           <ContentForHotel />
         </>
       } />
@@ -66,7 +88,7 @@ function App() {
 //Admin Page
       <Route path="/admin" element={
         <>
-          <HeaderForAdmin onLogout={handleLogout} />
+          <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
         </>
       } />
       
