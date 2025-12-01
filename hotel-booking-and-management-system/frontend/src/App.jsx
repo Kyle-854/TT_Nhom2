@@ -1,57 +1,99 @@
 import './App.css'
 import Header from './components/Header/Header'
+import Content from './components/Content/Content'
 import HeaderForCustomer from './components/Header/HeaderForCustomer'
 import HeaderForAdmin from './components/Header/HeaderForAdmin'
 import HeaderForHotel from './components/Header/HeaderForHotel'
 import ContentForHotel from './components/Content/ContentForHotel'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 
 function App() {
-  const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotel', 'admin'
+  const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotelowner', 'admin'
+  const [userFullName, setUserFullName] = useState(''); // Lưu fullName từ login response
+  const navigate = useNavigate()
 
-  // Logic đăng nhập giả lập
-  const handleLogin = (emailOrPhone, password) => {
-    if ((emailOrPhone === 'hotel@gmail.com' || emailOrPhone === '0911111111') && password === 'hotel') {
-      setUserRole('hotel');
-    } else if ((emailOrPhone === 'customer@gmail.com' || emailOrPhone === '0922222222') && password === 'customer') {
-      setUserRole('customer');
-    } else if ((emailOrPhone === 'admin@gmail.com' || emailOrPhone === '0900000000') && password === 'admin') {
-      setUserRole('admin');
+  // Logic đăng nhập từ API backend
+  const handleLogin = (loginResponse) => {
+    // Backend trả về roleName: "HotelOwner" | "Admin" | "Customer"
+    // Path: "/hotelowner", "/admin", "/customer"
+    
+    const roleName = loginResponse?.user?.roleName || loginResponse?.roleName || loginResponse?.user?.role || loginResponse?.role;
+    const fullName = loginResponse?.user?.fullName || loginResponse?.fullName || loginResponse?.user?.name || loginResponse?.name || '';
+    
+    if (roleName) {
+      // Map roleName từ backend sang path
+      let pathRole;
+      const roleNameLower = String(roleName).toLowerCase();
+      
+      if (roleNameLower === 'hotelowner' || roleNameLower === 'hotel') {
+        pathRole = 'hotelowner';
+      } else if (roleNameLower === 'admin') {
+        pathRole = 'admin';
+      } else if (roleNameLower === 'customer') {
+        pathRole = 'customer';
+      } else {
+        console.warn('[App] Vai trò không xác định từ backend:', roleName);
+        return;
+      }
+      
+      setUserFullName(fullName);
+      setUserRole(pathRole);
+    } else {
+      console.warn('[App] Không tìm thấy roleName trong response đăng nhập:', loginResponse);
     }
   };
 
   const handleLogout = () => {
     setUserRole(null);
+    setUserFullName('');
+    navigate('/')
   };
 
-  if (userRole === 'customer') {
-    return (
-      <>
-        <HeaderForCustomer onLogout={handleLogout} />
-        {/* Thêm nội dung cho trang customer ở đây */}
-      </>
-    )
-  } else if (userRole === 'hotel') {
-    return (
-      <>
-        <HeaderForHotel onLogout={handleLogout} />
-        <ContentForHotel />
-      </>
-    )
-  } else if (userRole === 'admin') {
-    return (
-      <>
-        <HeaderForAdmin onLogout={handleLogout} />
-        {/* Thêm nội dung cho trang admin ở đây */}
-      </>
-    )
-  }
+  // Khi userRole thay đổi, điều hướng tới route phù hợp
+  useEffect(() => {
+    if (userRole) {
+      navigate(`/${userRole}`)
+    }
+  }, [userRole, navigate])
 
   return (
-    <>
-      <Header onLogin={handleLogin} />
-    </>
+    <Routes>
+      
+//Home Page
+      <Route path="/" element={ 
+        <>
+          <Header onLogin={handleLogin} />
+          <Content />
+        </>
+      } />
+
+//Customer Page
+      <Route path="/customer" element={
+        <>
+          <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
+          <Content />
+        </>
+      } />
+      
+//Hotel Page
+      <Route path="/hotelowner" element={
+        <>
+          <HeaderForHotel onLogout={handleLogout} userFullName={userFullName} />
+          <ContentForHotel />
+        </>
+      } />
+      
+//Admin Page
+      <Route path="/admin" element={
+        <>
+          <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
+        </>
+      } />
+      
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
