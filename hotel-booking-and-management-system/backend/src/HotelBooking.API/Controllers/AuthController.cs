@@ -6,7 +6,8 @@ using System.Security.Claims;
 
 namespace HotelBooking.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Area("users")]
+    [Route("api/[area]/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -67,6 +68,20 @@ namespace HotelBooking.API.Controllers
 
             await _authService.UpdatePasswordAsync(userId, request);
 
+            return Ok(new { Message = "Đổi mật khẩu thành công." });
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] UserForgotPasswordDto request)
+        {
+            await _authService.ForgotPasswordAsync(request.Email);
+            return Ok(new { Message = "Vui lòng kiểm tra email." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] UserResetPasswordDto request)
+        {
+            await _authService.ResetPasswordAsync(request);
             return Ok(new { Message = "Đổi mật khẩu thành công." });
         }
 

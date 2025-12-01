@@ -41,8 +41,13 @@ namespace HotelBooking.API
             // JwtSettings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
 
+            // EmailSettings
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
             // Logging
             services.AddLogging();
+
+            services.AddMemoryCache();
 
             // Register 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
@@ -53,12 +58,16 @@ namespace HotelBooking.API
 
             services.AddScoped<JwtTokenGenerator>();
 
+            services.AddScoped<EmailService>();
+
             services.AddScoped<AuthService>();
             services.AddScoped<BookingService>();
             services.AddScoped<HotelService>();
             services.AddScoped<UserService>();
             services.AddScoped<ReviewService>();
             services.AddScoped<PaymentService>();
+
+            services.AddScoped<AdminUserService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -105,7 +114,14 @@ namespace HotelBooking.API
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
-                //options.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel Booking API", Version = "v1" });
+                options.SwaggerDoc("users", new OpenApiInfo { Title = "Users API", Version = "v1" });
+                options.SwaggerDoc("admins", new OpenApiInfo { Title = "Admin API", Version = "v1" });
+
+                options.DocInclusionPredicate((doc, api) =>
+                {
+                    return api.ActionDescriptor.RouteValues.TryGetValue("area", out var area)
+                           && area.Equals(doc, StringComparison.OrdinalIgnoreCase);
+                });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -144,7 +160,11 @@ namespace HotelBooking.API
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/users/swagger.json", "User API");
+                    c.SwaggerEndpoint("/swagger/admins/swagger.json", "Admin API");
+                });
             }
 
             app.UseHttpsRedirection();

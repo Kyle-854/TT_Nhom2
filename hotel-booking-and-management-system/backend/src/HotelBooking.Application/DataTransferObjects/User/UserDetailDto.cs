@@ -7,8 +7,8 @@
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public bool IsActive { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public string RoleName { get; set; } = string.Empty;
         public int TotalBookings { get; set; }
         public int TotalReviews { get; set; }

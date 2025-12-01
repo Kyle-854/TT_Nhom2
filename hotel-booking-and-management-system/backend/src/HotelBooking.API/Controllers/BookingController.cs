@@ -7,7 +7,8 @@ using System.Security.Claims;
 namespace HotelBooking.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Area("users")]
+    [Route("api/[area]/[controller]")]
     [Authorize] 
     public class BookingsController : ControllerBase
     {
