@@ -1,3 +1,5 @@
+Sau khi mở file frontend, thì mở terminal và gõ "npm install". Sau đó gõ "npm run dev" để xem.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
