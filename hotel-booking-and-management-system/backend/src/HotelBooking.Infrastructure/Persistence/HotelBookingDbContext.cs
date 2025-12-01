@@ -210,9 +210,7 @@ public partial class HotelBookingDbContext : DbContext
             entity.Property(e => e.Longitude).HasPrecision(9, 6);
             entity.Property(e => e.Name).HasMaxLength(300);
             entity.Property(e => e.Slug).HasMaxLength(300);
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasColumnType("timestamp(6)");
+            entity.Property(e => e.UpdatedAt).HasColumnType("timestamp(6)");
 
             entity.HasOne(d => d.OwnerUser).WithMany(p => p.Hotels)
                 .HasForeignKey(d => d.OwnerUserId)
@@ -440,7 +438,6 @@ public partial class HotelBookingDbContext : DbContext
             entity.Property(e => e.Currency).HasMaxLength(10);
             entity.Property(e => e.PriceOverride).HasPrecision(18, 2);
             entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP(6)")
                 .HasColumnType("timestamp(6)");
 
@@ -519,7 +516,6 @@ public partial class HotelBookingDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasMaxLength(512);
             entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
                 .HasColumnType("timestamp(6)");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)

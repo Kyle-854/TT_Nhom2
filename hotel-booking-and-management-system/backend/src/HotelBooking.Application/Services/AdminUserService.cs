@@ -102,6 +102,7 @@ namespace HotelBooking.Application.Services
             _mapper.Map(dto, user);
             user.UpdatedAt = DateTime.Now;
 
+            _unitOfWork.UserRepo.Update(user);
             await _unitOfWork.CompleteAsync();
             return true;
         }
@@ -119,6 +120,7 @@ namespace HotelBooking.Application.Services
             user.IsActive = isActive;
             user.UpdatedAt = DateTime.Now;
 
+            _unitOfWork.UserRepo.Update(user);
             await _unitOfWork.CompleteAsync();
             return true;
         }
@@ -140,6 +142,7 @@ namespace HotelBooking.Application.Services
             user.RoleId = roleId;
             user.UpdatedAt = DateTime.Now;
 
+            _unitOfWork.UserRepo.Update(user);
             await _unitOfWork.CompleteAsync();
             return true;
         }

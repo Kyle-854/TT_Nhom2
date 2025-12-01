@@ -50,7 +50,6 @@ namespace HotelBooking.Application.Services
             user.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.UserRepo.Update(user);
-
             await _unitOfWork.CompleteAsync();
         }
     }
