@@ -35,13 +35,13 @@ namespace HotelBooking.Application.Mappings
                     opt => opt.Ignore() 
                 );
 
+            CreateMap<UserProfileUpdateDto, User>();
+
             CreateMap<AdminUserCreateDto, User>()
                 .ForMember(
                     dest => dest.PasswordHash,
-                    opt => opt.Ignore() 
+                    opt => opt.Ignore()
                 );
-
-            CreateMap<UserProfileUpdateDto, User>();
 
             CreateMap<AdminUserUpdateDto, User>();
         }
