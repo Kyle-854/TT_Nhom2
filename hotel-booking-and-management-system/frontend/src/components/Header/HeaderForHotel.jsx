@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-const HeaderForHotel = ({ onLogout, userFullName }) => {
+const HeaderForHotel = ({ userFullName }) => {
   return (
     <>
       <header className="sticky top-0 left-0 w-full bg-white shadow-md z-40 px-4 sm:px-8 py-4">

@@ -9,10 +9,10 @@ const QuanLyDanhSachPhong = () => {
 
   const handleSaveRoom = (roomData) => {
     if (editingRoom) {
-      // Update existing room
+      // Cập nhật phòng tồn tại
       setRooms(rooms.map(room => room.id === editingRoom.id ? { ...roomData, id: room.id } : room));
     } else {
-      // Add new room with a unique id
+      // Thêm phòng mới với id duy nhất
       setRooms([...rooms, { ...roomData, id: Date.now() }]);
     }
     setView('list');
@@ -32,7 +32,7 @@ const QuanLyDanhSachPhong = () => {
 
   const handleDuplicate = (roomToDuplicate) => {
     const newName = `${roomToDuplicate.roomName} (Copy)`;
-    // Check if a room with the new name already exists and add a number if it does
+    // Kiểm tra nếu đã có phòng trùng tên, thêm số để phân biệt
     let finalName = newName;
     let counter = 1;
     while (rooms.some(room => room.roomName === finalName)) {
@@ -43,7 +43,7 @@ const QuanLyDanhSachPhong = () => {
     const newRoom = {
       ...roomToDuplicate,
       roomName: finalName,
-      id: Date.now(), // new unique id
+      id: Date.now(), // id duy nhất 
     };
     setRooms([...rooms, newRoom]);
   };

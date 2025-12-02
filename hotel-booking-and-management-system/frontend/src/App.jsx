@@ -19,8 +19,8 @@ function App() {
     // Backend trả về roleName: "HotelOwner" | "Admin" | "Customer"
     // Path: "/hotelowner", "/admin", "/customer"
     
-    const roleName = loginResponse?.user?.roleName || loginResponse?.roleName || loginResponse?.user?.role || loginResponse?.role;
-    const fullName = loginResponse?.user?.fullName || loginResponse?.fullName || loginResponse?.user?.name || loginResponse?.name || '';
+    const roleName = loginResponse?.user?.roleName;
+    const fullName = loginResponse?.user?.fullName;
     
     if (roleName) {
       // Map roleName từ backend sang path
@@ -48,6 +48,8 @@ function App() {
   const handleLogout = () => {
     setUserRole(null);
     setUserFullName('');
+    // Xóa token trong localStorage để đảm bảo đăng xuất hoàn toàn (gọi từ bên ApiAuth logic nếu cần, hoặc xóa tay ở đây cho chắc)
+    localStorage.removeItem('authToken');
     navigate('/')
   };
 
@@ -80,8 +82,8 @@ function App() {
 //Hotel Page
       <Route path="/hotelowner" element={
         <>
-          <HeaderForHotel onLogout={handleLogout} userFullName={userFullName} />
-          <ContentForHotel />
+          <HeaderForHotel userFullName={userFullName} />
+          <ContentForHotel onLogout={handleLogout} />
         </>
       } />
       

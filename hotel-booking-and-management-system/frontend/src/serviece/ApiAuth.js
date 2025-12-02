@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// Sử dụng đường dẫn tương đối khi Vite proxy được bật (dev server proxy /api tới backend)
-// Hoặc sử dụng URL tuyệt đối cho production. Hiện tại dùng '' để axios xây dựng URL tương đối tới origin của app.
 const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? '' : 'http://160.191.245.177:8000';
 
 // Tạo instance axios
@@ -36,18 +34,17 @@ apiClient.interceptors.response.use(
 );
 
 export async function login(identifier, password) {
-  // Theo spec Swagger: endpoint là /api/Auth/login, payload là emailOrPhoneNumber + password
+  // Theo spec Swagger: endpoint là /api/users/Auth/login, payload là emailOrPhoneNumber + password
   try {
-    console.info('[ApiAuth] đăng nhập vào /api/Auth/login', { identifier });
-    const res = await apiClient.post('/api/Auth/login', {
+    console.info('[ApiAuth] đăng nhập vào /api/users/Auth/login', { identifier });
+    const res = await apiClient.post('/api/users/Auth/login', {
       emailOrPhoneNumber: identifier,
       password,
     });
     const data = res.data;
     console.info('[ApiAuth] đăng nhập thành công', { data });
 
-    // Thử các tên field token phổ biến trong response
-    const token = data?.token || data?.accessToken || data?.access_token || data?.authToken || data?.result?.token;
+    const token = data?.token; //Đây là đường dẫn để lấy token từ endpoint login
     if (token) {
       localStorage.setItem('authToken', token);
       console.info('[ApiAuth] token đã lưu vào localStorage');
@@ -68,9 +65,9 @@ export async function login(identifier, password) {
 }
 
 export async function register(userData) {
-  // Theo spec Swagger: endpoint là /api/Auth/register, payload bao gồm email, password, fullName, phone
+  // Theo spec Swagger: endpoint là /api/users/Auth/register, payload bao gồm email, password, fullName, phone
   try {
-    const res = await apiClient.post('/api/Auth/register', userData);
+    const res = await apiClient.post('/api/users/Auth/register', userData);
     return res.data;
   } catch (err) {
     console.error('[ApiAuth] đăng ký thất bại', { status: err.response?.status, data: err.response?.data });
@@ -79,8 +76,7 @@ export async function register(userData) {
 }
 
 export async function getCurrentUser() {
-  // Thử các endpoint lấy thông tin user phổ biến
-  const endpoints = ['/api/Auth/user-info', '/api/auth/me', '/api/user'];
+  const endpoints = ['/api/users/Auth/user-info', '/api/users/User/me'];
   let lastError = null;
   for (const ep of endpoints) {
     try {
@@ -94,12 +90,12 @@ export async function getCurrentUser() {
   throw lastError || new Error('Lấy thông tin user thất bại');
 }
 
-export async function refreshToken() {
-  const res = await apiClient.post('/api/auth/refresh');
-  const token = res?.data?.token || res?.data?.accessToken || res?.data?.access_token;
-  if (token) localStorage.setItem('authToken', token);
-  return res.data;
-}
+// export async function refreshToken() {
+//   const res = await apiClient.post('/api/auth/refresh');
+//   const token = res?.data?.token;
+//   if (token) localStorage.setItem('authToken', token);
+//   return res.data;
+// }
 
 export function logout() {
   localStorage.removeItem('authToken');

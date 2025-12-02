@@ -92,7 +92,7 @@ const AddRoom = ({ onSave, onCancel, initialData }) => {
   }, [selectedAmenities]);
 
   const handleSave = () => {
-    // Basic validation
+    // Kiểm tra cơ bản
     if (!roomName.trim()) return alert('Vui lòng nhập tên phòng.');
     onSave(roomData);
   };

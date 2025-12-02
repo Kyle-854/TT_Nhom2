@@ -32,7 +32,7 @@ const Header = ({ onLogin }) => {
 
     try {
       const response = await login(emailOrPhoneNumber, password);
-      // response may contain token and user info depending on backend
+      // Response có thể chứa token và thông tin người dùng tuỳ backend
       if (response) {
         if (typeof onLogin === 'function') onLogin(response);
         setIsLoginOpen(false);
@@ -41,10 +41,10 @@ const Header = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login failed:', error);
-      // error may be an Error with message, or an axios error
+      // Lỗi có thể là Error chứa message, hoặc là lỗi từ axios
       let message = 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.';
       if (error?.body) {
-        // normalized error from ApiAuth
+        // Lỗi đã được chuẩn hoá từ ApiAuth
         message = error.body?.message || error.body?.error || JSON.stringify(error.body);
       } else if (error?.message) {
         try {
@@ -64,7 +64,7 @@ const Header = ({ onLogin }) => {
     setRegisterError('');
     setRegisterSuccess('');
 
-    // Validation: Check if all fields are filled
+    // Kiểm tra: các trường bắt buộc đã được nhập
     if (!registerFullName.trim()) {
       setRegisterError('Vui lòng nhập họ và tên.');
       return;
@@ -86,7 +86,7 @@ const Header = ({ onLogin }) => {
       return;
     }
 
-    // Validation: Password and confirm password must match
+    // Kiểm tra: mật khẩu và xác nhận mật khẩu phải khớp
     if (registerPassword !== registerConfirmPassword) {
       setRegisterError('Mật khẩu và xác nhận mật khẩu không trùng khớp.');
       return;
@@ -95,15 +95,16 @@ const Header = ({ onLogin }) => {
     setIsRegisterLoading(true);
 
     try {
-      // Call register API, only send password (not confirmPassword)
-      const response = await register({
+      // Gọi API đăng ký, chỉ gửi password (không gửi confirmPassword)
+      await register({
         fullName: registerFullName,
         phone: registerPhone,
         email: registerEmail,
         password: registerPassword,
       });
+      
 
-      // Success: show message and reset form
+      // Thành công: hiển thị thông báo và đặt lại form
       setRegisterSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
       setRegisterFullName('');
       setRegisterPhone('');
@@ -111,7 +112,7 @@ const Header = ({ onLogin }) => {
       setRegisterPassword('');
       setRegisterConfirmPassword('');
 
-      // Auto-close register dialog after 2 seconds and show login dialog
+      // Tự động đóng dialog đăng ký sau 2 giây và mở dialog đăng nhập
       setTimeout(() => {
         setIsRegisterOpen(false);
         setIsLoginOpen(true);

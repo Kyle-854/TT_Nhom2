@@ -26,13 +26,15 @@ const menuItems = [
   { id: 5, name: "Phản hồi từ khách hàng", componentKey: "PhanHoiTuKhachHang", icon: <ChatBubbleLeftRightIcon className="h-6 w-6" /> },
 ];
 
-const ContentForHotel = () => {
+const ContentForHotel = ({ onLogout }) => {
   // State để lưu component đang được chọn, mặc định là 'Thông tin khách sạn'
   const [selectedComponentKey, setSelectedComponentKey] = useState("ThongTinKhachSan");
   // State để quản lý trạng thái thu gọn của sidebar
   const [isCollapsed, setIsCollapsed] = useState(false);
   // State để quản lý menu trên mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // State để hiển thị loading khi đang đăng xuất
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -47,10 +49,21 @@ const ContentForHotel = () => {
     setIsMobileMenuOpen(false); // Tự động đóng menu khi chọn
   }, []);
 
-  const handleLogout = useCallback((e) => {
+  const handleLogout = useCallback(async (e) => {
     e.preventDefault();
-    console.log("Đăng xuất"); // Xử lý đăng xuất ở đây
-  }, []);
+    if (isLoggingOut) return; // Ngăn chặn multiple click
+    
+    setIsLoggingOut(true);
+    try {
+      if (typeof onLogout === 'function') {
+        await onLogout();
+      }
+    } catch (err) {
+      console.error('[ContentForHotel] lỗi khi đăng xuất:', err);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, [onLogout, isLoggingOut]);
 
   const SelectedComponent = componentMap[selectedComponentKey];
 
@@ -125,13 +138,17 @@ const ContentForHotel = () => {
         <div className="border-t pt-4">
           <a
             href="#"
-            className={`flex p-3 rounded-md font-medium text-red-600 hover:bg-red-100 transition-colors duration-200 h-12 ${isCollapsed ? 'justify-center' : ''}`}
+            className={`flex p-3 rounded-md font-medium transition-colors duration-200 h-12 ${isCollapsed ? 'justify-center' : ''} ${
+              isLoggingOut 
+                ? 'text-gray-400 cursor-not-allowed' 
+                : 'text-red-600 hover:bg-red-100'
+            }`}
             onClick={handleLogout}
           >
             <div className="flex items-center">
               <ArrowLeftOnRectangleIcon className="h-6 w-6" />
               <span className={`ml-4 transition-opacity duration-300 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100'}`}>
-                Đăng xuất
+                {isLoggingOut ? 'Đang đăng xuất...' : 'Đăng xuất'}
               </span>
             </div>
           </a>
