@@ -5,6 +5,7 @@ import HeaderForCustomer from './components/Header/HeaderForCustomer'
 import HeaderForAdmin from './components/Header/HeaderForAdmin'
 import HeaderForHotel from './components/Header/HeaderForHotel'
 import ContentForHotel from './components/Content/ContentForHotel'
+import { logout } from './serviece/ApiAuth'
 
 import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
@@ -45,12 +46,18 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    setUserRole(null);
-    setUserFullName('');
-    // Xóa token trong localStorage để đảm bảo đăng xuất hoàn toàn (gọi từ bên ApiAuth logic nếu cần, hoặc xóa tay ở đây cho chắc)
-    localStorage.removeItem('authToken');
-    navigate('/')
+  const handleLogout = async () => {
+    try {
+      // Gọi API logout từ backend (sẽ xóa token cục bộ trong ApiAuth)
+      await logout();
+    } catch (err) {
+      console.error('[App] lỗi khi đăng xuất:', err);
+    } finally {
+      // Luôn xóa state và redirect, dù API thành công hay thất bại
+      setUserRole(null);
+      setUserFullName('');
+      navigate('/');
+    }
   };
 
   // Khi userRole thay đổi, điều hướng tới route phù hợp
@@ -82,7 +89,7 @@ function App() {
 //Hotel Page
       <Route path="/hotelowner" element={
         <>
-          <HeaderForHotel userFullName={userFullName} />
+          <HeaderForHotel userFullName={userFullName} onLogout={handleLogout} />
           <ContentForHotel onLogout={handleLogout} />
         </>
       } />

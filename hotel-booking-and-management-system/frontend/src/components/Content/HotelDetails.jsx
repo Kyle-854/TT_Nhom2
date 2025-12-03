@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import RoomTypeDetails from './RoomTypeDetails'
+import { getHotelRoomTypes } from '../../serviece/ApiHotel'
 
 function Star({ filled }) {
   return (
@@ -17,6 +18,34 @@ function Star({ filled }) {
 
 const HotelDetails = ({ hotel, onClose }) => {
   const [selectedRoomType, setSelectedRoomType] = useState(null)
+  const [roomTypes, setRoomTypes] = useState([])
+  const [loadingRooms, setLoadingRooms] = useState(false)
+  const [roomError, setRoomError] = useState(null)
+
+  const hotelId = hotel ?.hotelId;
+
+  // Fetch room types từ backend endpoint
+  useEffect(() => {
+    if (!hotelId) return
+
+    const fetchRoomTypes = async () => {
+      setLoadingRooms(true)
+      setRoomError(null)
+      try {
+        const data = await getHotelRoomTypes(hotelId)
+        let roomTypesList = Array.isArray(data) ? data : (data?.data || []);
+        setRoomTypes(roomTypesList)
+      } catch (err) {
+        setRoomError(err.message || 'Lấy loại phòng thất bại')
+        setRoomTypes([])
+      } finally {
+        setLoadingRooms(false)
+      }
+    }
+
+    fetchRoomTypes()
+  }, [hotelId])
+
   if (!hotel) return null
 
   const filledStars = Math.max(0, Math.min(5, Math.round(hotel.starRating || 0)))
@@ -112,20 +141,30 @@ const HotelDetails = ({ hotel, onClose }) => {
 
             <div>
               <div className="text-sm text-gray-500">Loại phòng & giá</div>
+              {loadingRooms && <div className="mt-2 text-sm text-gray-500">Đang tải loại phòng...</div>}
+              {roomError && <div className="mt-2 text-sm text-red-600">Lỗi: {roomError}</div>}
               <div className="mt-2 space-y-2">
-                {(hotel.roomTypes && hotel.roomTypes.length > 0) ? (
-                  hotel.roomTypes.map(rt => (
-                    <button
-                      key={rt.roomTypeId}
-                      type="button"
-                      onClick={() => setSelectedRoomType(rt)}
-                      className="w-full text-left bg-white p-2 rounded border hover:shadow-sm focus:outline-none"
-                    >
-                      <div className="font-medium text-sm">{rt.name}</div>
-                      <div className="text-sm text-gray-600">Sức chứa: {rt.capacity}</div>
-                      <div className="text-sm text-indigo-600 font-semibold">{rt.pricePerNight ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(rt.pricePerNight) : 'Liên hệ'}</div>
-                    </button>
-                  ))
+                {(roomTypes && roomTypes.length > 0) ? (
+                  roomTypes.map(rt => {
+                    const rtId = rt.roomTypeId;
+                    const rtName = rt.name || 'Phòng';
+                    const rtCapacity = rt.capacity || '—';
+                    const rtPrice = rt.pricePerNight;
+                    return (
+                      <button
+                        key={rtId}
+                        type="button"
+                        onClick={() => setSelectedRoomType(rt)}
+                        className="w-full text-left bg-white p-2 rounded border hover:shadow-sm focus:outline-none"
+                      >
+                        <div className="font-medium text-sm">{rtName}</div>
+                        <div className="text-sm text-gray-600">Sức chứa: {rtCapacity}</div>
+                        <div className="text-sm text-indigo-600 font-semibold">
+                          {rtPrice ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(rtPrice) : 'Liên hệ'}
+                        </div>
+                      </button>
+                    )
+                  })
                 ) : (
                   <div className="text-sm text-gray-600">Không có dữ liệu phòng</div>
                 )}
