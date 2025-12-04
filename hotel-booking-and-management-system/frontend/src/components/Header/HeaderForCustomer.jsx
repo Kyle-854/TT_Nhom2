@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const HeaderForCustomer = ({ onLogout, userFullName }) => {
   // Quản lý trạng thái menu trực tiếp trong component
@@ -11,6 +11,14 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
   const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
   
+  const navigate = useNavigate()
+
+  const goChangePassword = () => {
+    setIsProfileMenuOpen(false)
+    setIsMenuOpen(false)
+    navigate('/customer/change-password')
+  }
+
   return (
     <>
       <header className="sticky top-0 left-0 w-full bg-white shadow-md z-40 px-4 sm:px-8 py-4">
@@ -52,8 +60,12 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
                     <div className="py-1">
                       <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
-                        Chỉnh sửa hồ sơ
+                        Hồ sơ cá nhân
                       </Link>
+                      <button type="button" onClick={goChangePassword} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        Đổi mật khẩu
+                      </button>
                       <Link to="/notifications" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 14h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
                         Thông báo
@@ -94,8 +106,12 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
               <span className="block px-4 py-2 text-base font-medium text-gray-800">Xin chào {userFullName}</span>
               <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
-                Chỉnh sửa hồ sơ
+                Hồ sơ cá nhân
               </Link>
+              <button type="button" onClick={goChangePassword} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Đổi mật khẩu
+              </button>
               <Link to="/notifications" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 14h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
                 Thông báo

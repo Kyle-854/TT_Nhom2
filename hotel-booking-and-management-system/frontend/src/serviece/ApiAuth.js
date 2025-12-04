@@ -90,12 +90,59 @@ export async function getCurrentUser() {
   throw lastError || new Error('Lấy thông tin user thất bại');
 }
 
-// export async function refreshToken() {
-//   const res = await apiClient.post('/api/auth/refresh');
-//   const token = res?.data?.token;
-//   if (token) localStorage.setItem('authToken', token);
-//   return res.data;
-// }
+export async function changePassword({ currentPassword, newPassword }) {
+  try {
+    const res = await apiClient.put('/api/users/Auth/change-password', {
+      currentPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (err) {
+    const status = err.response?.status;
+    const body = err.response?.data;
+    console.error('[ApiAuth] changePassword thất bại', { status, body, message: err.message });
+    const message = (body && (body.message || body.error || body.detail)) || err.message || 'Đổi mật khẩu thất bại';
+    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+    e.status = status;
+    e.body = body;
+    e.original = err;
+    throw e;
+  }
+}
+
+export async function forgotPassword(identifier) {
+  try {
+    console.info('[ApiAuth] gửi yêu cầu quên mật khẩu cho:', { identifier });
+    const res = await apiClient.post('/api/users/Auth/forgot-password', { email: identifier });
+    return res.data;
+  } catch (err) {
+    const status = err.response?.status;
+    const body = err.response?.data;
+    console.error('[ApiAuth] forgotPassword thất bại', { status, body, message: err.message });
+    const message = (body && (body.message || body.error || body.detail)) || err.message || 'Yêu cầu đặt lại mật khẩu thất bại';
+    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+    e.status = status;
+    e.body = body;
+    e.original = err;
+    throw e;
+  }
+}
+
+export async function resetPassword({ token, newPassword }) {
+  try {
+    const res = await apiClient.post('/api/users/Auth/reset-password', {
+      token: token,       
+      newPassword: newPassword,
+    });
+    return res.data;
+  } catch (err) {
+    const body = err.response?.data;
+    const message = (body && (body.message || body.error)) || 'Đặt lại mật khẩu thất bại';
+    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+    throw e;
+  }
+}
+
 
 export function logout() {
   localStorage.removeItem('authToken');

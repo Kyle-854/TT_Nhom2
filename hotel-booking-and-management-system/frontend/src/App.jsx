@@ -5,9 +5,10 @@ import HeaderForCustomer from './components/Header/HeaderForCustomer'
 import HeaderForAdmin from './components/Header/HeaderForAdmin'
 import HeaderForHotel from './components/Header/HeaderForHotel'
 import ContentForHotel from './components/Content/ContentForHotel'
+import ChangePassword from './components/CustomerFeatures/ChangePassword'
 import { logout } from './serviece/ApiAuth'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 
 function App() {
@@ -41,6 +42,8 @@ function App() {
       
       setUserFullName(fullName);
       setUserRole(pathRole);
+
+      navigate(`/${pathRole}`);
     } else {
       console.warn('[App] Không tìm thấy roleName trong response đăng nhập:', loginResponse);
     }
@@ -61,11 +64,11 @@ function App() {
   };
 
   // Khi userRole thay đổi, điều hướng tới route phù hợp
-  useEffect(() => {
-    if (userRole) {
-      navigate(`/${userRole}`)
-    }
-  }, [userRole, navigate])
+  // useEffect(() => {
+  //   if (userRole) {
+  //     navigate(`/${userRole}`)
+  //   }
+  // }, [userRole, navigate])
 
   return (
     <Routes>
@@ -85,6 +88,14 @@ function App() {
           <Content />
         </>
       } />
+
+      <Route path="/customer/change-password" element={
+        <>
+          <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
+          <ChangePassword />
+        </>
+      } />
+
       
 //Hotel Page
       <Route path="/hotelowner" element={
