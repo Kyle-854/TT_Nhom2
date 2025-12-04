@@ -27,7 +27,6 @@ namespace HotelBooking.API
             Configuration = configuration;
         }
 
-
         public void ConfigureServices(IServiceCollection services)
         {
             // Database
@@ -66,8 +65,10 @@ namespace HotelBooking.API
             services.AddScoped<UserService>();
             services.AddScoped<ReviewService>();
             services.AddScoped<PaymentService>();
+            services.AddScoped<SearchService>();
 
             services.AddScoped<AdminUserService>();
+            services.AddScoped<AdminHotelModerationService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -119,8 +120,7 @@ namespace HotelBooking.API
 
                 options.DocInclusionPredicate((doc, api) =>
                 {
-                    return api.ActionDescriptor.RouteValues.TryGetValue("area", out var area)
-                           && area.Equals(doc, StringComparison.OrdinalIgnoreCase);
+                    return api.ActionDescriptor.RouteValues.TryGetValue("area", out string? area) && area.Equals(doc, StringComparison.OrdinalIgnoreCase);
                 });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
