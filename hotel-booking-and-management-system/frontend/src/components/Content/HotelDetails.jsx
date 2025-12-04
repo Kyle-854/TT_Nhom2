@@ -16,12 +16,36 @@ function Star({ filled }) {
   )
 }
 
+// Component để hiển thị ảnh lớn (lightbox)
+const ImageViewer = ({ src, alt, onClose }) => {
+  if (!src) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+      onClick={onClose}
+    >
+      <button 
+        onClick={onClose} 
+        className="absolute top-4 right-4 text-white text-3xl z-10"
+        aria-label="Đóng"
+      >
+        &times;
+      </button>
+      <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+        <img src={src} alt={alt} className="max-w-full max-h-[90vh] object-contain rounded-lg" />
+      </div>
+    </div>
+  );
+};
+
 const HotelDetails = ({ hotel, onClose }) => {
   const [selectedRoomType, setSelectedRoomType] = useState(null)
   const [roomTypes, setRoomTypes] = useState([])
   const [loadingRooms, setLoadingRooms] = useState(false)
   const [roomError, setRoomError] = useState(null)
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  
   const hotelId = hotel ?.hotelId;
 
   // Fetch room types từ backend endpoint
@@ -65,11 +89,22 @@ const HotelDetails = ({ hotel, onClose }) => {
             {/* Images grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {(hotel.images && hotel.images.length > 0) ? (
-                hotel.images.map((img, idx) => (
-                  <img key={idx} src={img.url} alt={img.altText || hotel.name} className="w-full h-44 object-cover rounded" onError={(e)=> e.target.src='/placeholder-image.png'} />
-                ))
+                hotel.images.map((img, idx) => {
+                  const imageUrl = img.url || '/placeholder-image.png';
+                  return (
+                    <button key={idx} onClick={() => setSelectedImage(imageUrl)} className="w-full h-44 block rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      <img src={imageUrl} alt={img.altText || hotel.name} className="w-full h-full object-cover" onError={(e)=> e.target.src='/placeholder-image.png'} />
+                    </button>
+                  )
+                })
               ) : (
-                <img src={hotel.coverImageUrl || '/placeholder-image.png'} alt={hotel.name} className="w-full h-44 object-cover rounded" onError={(e)=> e.target.src='/placeholder-image.png'} />
+                <button 
+                  onClick={() => setSelectedImage(hotel.coverImageUrl || '/placeholder-image.png')} 
+                  className="w-full h-44 block rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  disabled={!hotel.coverImageUrl}
+                >
+                  <img src={hotel.coverImageUrl || '/placeholder-image.png'} alt={hotel.name} className="w-full h-full object-cover" onError={(e)=> e.target.src='/placeholder-image.png'} />
+                </button>
               )}
             </div>
 
@@ -176,6 +211,12 @@ const HotelDetails = ({ hotel, onClose }) => {
       {selectedRoomType && (
         <RoomTypeDetails roomType={selectedRoomType} onClose={() => setSelectedRoomType(null)} />
       )}
+
+      <ImageViewer 
+        src={selectedImage} 
+        alt="Xem ảnh chi tiết" 
+        onClose={() => setSelectedImage(null)} 
+      />
     </div>
   )
 }

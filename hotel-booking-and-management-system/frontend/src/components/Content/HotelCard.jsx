@@ -39,7 +39,7 @@ const HotelCard = ({
           <img
             src={coverImageUrl}
             alt={name}
-            className="w-full h-56 md:h-full object-cover"
+            className="w-full h-56 md:h-56 object-contain"
             onError={(e) => { e.target.src = '/placeholder-image.png' }}
           />
         </div>

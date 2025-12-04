@@ -8,13 +8,14 @@ import ContentForHotel from './components/Content/ContentForHotel'
 import ChangePassword from './components/CustomerFeatures/ChangePassword'
 import { logout } from './serviece/ApiAuth'
 
-import { useState } from 'react'
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom'
 
 function App() {
   const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotelowner', 'admin'
   const [userFullName, setUserFullName] = useState(''); // Lưu fullName từ login response
   const navigate = useNavigate()
+  const location = useLocation();
 
   // Logic đăng nhập từ API backend
   const handleLogin = (loginResponse) => {
@@ -64,11 +65,11 @@ function App() {
   };
 
   // Khi userRole thay đổi, điều hướng tới route phù hợp
-  // useEffect(() => {
-  //   if (userRole) {
-  //     navigate(`/${userRole}`)
-  //   }
-  // }, [userRole, navigate])
+  useEffect(() => {
+    if (userRole && location.pathname === '/') {
+      navigate(`/${userRole}`);
+    }
+  }, [userRole, navigate, location.pathname]);
 
   return (
     <Routes>
