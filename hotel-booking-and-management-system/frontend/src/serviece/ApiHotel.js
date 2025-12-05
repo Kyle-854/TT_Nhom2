@@ -1,4 +1,4 @@
-import apiClient from './ApiAuth';
+import apiClient from './axiosClient';
 
 function normalizeError(err, fallbackMessage = 'Lỗi API Hotel') {
 	const status = err?.response?.status;

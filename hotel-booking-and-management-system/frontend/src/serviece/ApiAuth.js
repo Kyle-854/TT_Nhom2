@@ -1,53 +1,16 @@
-import axios from 'axios';
-
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? '' : 'http://160.191.245.177:8000';
-
-// Tạo instance axios
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000,
-});
-
-// Thêm token từ localStorage vào request (nếu có)
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Interceptor xử lý response, handle 401 globally
-apiClient.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
-      // Xóa token nếu hết hạn và có thể redirect tới login
-      localStorage.removeItem('authToken');
-    }
-    return Promise.reject(err);
-  }
-);
+import apiClient from './axiosClient';
 
 export async function login(identifier, password) {
-  // Theo spec Swagger: endpoint là /api/users/Auth/login, payload là emailOrPhoneNumber + password
   try {
-    console.info('[ApiAuth] đăng nhập vào /api/users/Auth/login', { identifier });
     const res = await apiClient.post('/api/users/Auth/login', {
       emailOrPhoneNumber: identifier,
       password,
     });
     const data = res.data;
-    console.info('[ApiAuth] đăng nhập thành công', { data });
 
     const token = data?.token; //Đây là đường dẫn để lấy token từ endpoint login
     if (token) {
       localStorage.setItem('authToken', token);
-      console.info('[ApiAuth] token đã lưu vào localStorage');
     }
     return data;
   } catch (err) {
@@ -65,7 +28,6 @@ export async function login(identifier, password) {
 }
 
 export async function register(userData) {
-  // Theo spec Swagger: endpoint là /api/users/Auth/register, payload bao gồm email, password, fullName, phone
   try {
     const res = await apiClient.post('/api/users/Auth/register', userData);
     return res.data;
@@ -84,7 +46,6 @@ export async function getCurrentUser() {
       return res.data;
     } catch (err) {
       lastError = err;
-      console.debug('[ApiAuth] lấy user info thất bại', { ep, status: err.response?.status });
     }
   }
   throw lastError || new Error('Lấy thông tin user thất bại');
@@ -112,7 +73,6 @@ export async function changePassword({ currentPassword, newPassword }) {
 
 export async function forgotPassword(identifier) {
   try {
-    console.info('[ApiAuth] gửi yêu cầu quên mật khẩu cho:', { identifier });
     const res = await apiClient.post('/api/users/Auth/forgot-password', { email: identifier });
     return res.data;
   } catch (err) {
@@ -148,4 +108,3 @@ export function logout() {
   localStorage.removeItem('authToken');
 }
 
-export default apiClient;
