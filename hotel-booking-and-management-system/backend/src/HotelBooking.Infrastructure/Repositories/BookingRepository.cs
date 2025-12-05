@@ -14,75 +14,38 @@ namespace HotelBooking.Infrastructure.Repositories
         {
         }
 
-        public async Task CheckRoomAvailabilityAsync(long hotelId, int roomTypeId,DateOnly checkIn,DateOnly checkOut,int quantity)
+        public async Task<(RoomType? RoomInfo, List<RoomInventory> Inventories)> GetRoomAvailabilityDataAsync(int roomTypeId, DateOnly checkIn, DateOnly checkOut)
         {
-            (int RoomTypeId, int TotalRooms, long HotelId)? roomType = await _context.RoomTypes
+            RoomType? roomType = await _context.RoomTypes
                 .AsNoTracking()
                 .Where(rt => rt.RoomTypeId == roomTypeId)
-                .Select(rt => new { rt.RoomTypeId, rt.TotalRooms, rt.HotelId })
-                .FirstOrDefaultAsync()
-                .ContinueWith(t => t.Result != null ? (t.Result.RoomTypeId, t.Result.TotalRooms, t.Result.HotelId) : ((int, int, long)?)null);
-
-            if (roomType == null)
-            {
-                throw new KeyNotFoundException($"Loại phòng với ID {roomTypeId} không tồn tại.");
-            }
-
-            if (roomType.Value.HotelId != hotelId)
-            {
-                throw new InvalidOperationException($"Loại phòng {roomTypeId} không thuộc về khách sạn {hotelId}.");
-            }
+                .Select(rt => new RoomType
+                {
+                    RoomTypeId = rt.RoomTypeId,
+                    TotalRooms = rt.TotalRooms,
+                    HotelId = rt.HotelId
+                })
+                .FirstOrDefaultAsync();
 
             List<RoomInventory>? inventories = await _context.RoomInventories
                 .AsNoTracking()
-                .Where(ri => ri.RoomTypeId == roomTypeId && ri.Date >= checkIn && ri.Date < checkOut)
+                .Where(ri => ri.RoomTypeId == roomTypeId
+                            && ri.Date >= checkIn
+                            && ri.Date < checkOut)
                 .ToListAsync();
 
-            DateOnly currentDate = checkIn;
-            while (currentDate < checkOut)
-            {
-                RoomInventory? inventoryRecord = inventories.FirstOrDefault(ri => ri.Date == currentDate);
-
-                int availableRooms;
-
-                if (inventoryRecord != null)
-                {
-                    availableRooms = inventoryRecord.AvailableRooms;
-                }
-                else
-                {
-                    availableRooms = roomType.Value.TotalRooms;
-                }
-
-                if (availableRooms < quantity)
-                {
-                    throw new InvalidOperationException($"Loại phòng {roomTypeId} không đủ số lượng vào ngày {currentDate:dd/MM/yyyy}. Còn lại: {availableRooms}, Yêu cầu: {quantity}");
-                }
-
-                currentDate = currentDate.AddDays(1);
-            }
+            return (roomType, inventories);
         }
 
-        public bool ValidateBookingDates(DateOnly checkIn, DateOnly checkOut, int quantity)
+        public async Task<Promotion?> GetPromotionByCodeAsync(long hotelId, string promotionCode, DateTimeOffset now)
         {
-            if (quantity <= 0) return false;
-            if (checkOut <= checkIn) return false;
-            return true;
-        }
-
-        public async Task<Promotion?> GetValidPromotionAsync(long hotelId, string promotionCode)
-        {
-            if (string.IsNullOrWhiteSpace(promotionCode))
-                return null;
-
-            DateTimeOffset today = DateTimeOffset.Now;
-
             return await _context.Promotions
+                .AsNoTracking()
                 .Where(p => p.Code == promotionCode
                          && p.HotelId == hotelId
                          && p.IsActive == true
-                         && today >= p.StartAt
-                         && today <= p.EndAt)
+                         && now >= p.StartAt
+                         && now <= p.EndAt)
                 .FirstOrDefaultAsync();
         }
 

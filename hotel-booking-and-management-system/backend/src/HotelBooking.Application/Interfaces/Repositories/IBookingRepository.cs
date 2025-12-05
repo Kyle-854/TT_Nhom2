@@ -5,9 +5,8 @@ namespace HotelBooking.Application.Interfaces.Repositories
 {
     public interface IBookingRepository : IGenericRepository<Booking>
     {
-        Task CheckRoomAvailabilityAsync(long hotelId, int roomTypeId, DateOnly checkIn, DateOnly checkOut, int quantity);
-        bool ValidateBookingDates(DateOnly checkIn, DateOnly checkOut, int quantity);
-        Task<Promotion?> GetValidPromotionAsync(long hotelId, string promotionCode);
+        Task<(RoomType? RoomInfo, List<RoomInventory> Inventories)> GetRoomAvailabilityDataAsync(int roomTypeId, DateOnly checkIn, DateOnly checkOut);
+        Task<Promotion?> GetPromotionByCodeAsync(long hotelId, string promotionCode, DateTimeOffset now);
         Task<bool> IsHotelActiveAsync(long hotelId);
         Task<Booking?> GetBookingByCodeAsync(string bookingCode);
         Task<IEnumerable<Booking>> GetBookingsByCustomerIdAsync(long customerId);

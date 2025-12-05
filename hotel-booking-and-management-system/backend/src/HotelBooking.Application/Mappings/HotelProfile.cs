@@ -36,12 +36,11 @@ namespace HotelBooking.Application.Mappings
 
             CreateMap<Hotel, HotelSummaryDto>()
                 .ForMember(dest => dest.CoverImageUrl,
-                           opt => opt.MapFrom(src => src.Medias
-                                                       .FirstOrDefault(m => m.IsMain).Url))
+                           opt => opt.MapFrom(src => src.Medias.FirstOrDefault(m => m.IsMain).Url))
                 .ForMember(dest => dest.AverageUserRating,
                            opt => opt.MapFrom(src => src.Reviews.Any(r => r.IsPublished == true)
-                                                       ? src.Reviews.Where(r => r.IsPublished == true).Average(r => r.Rating)
-                                                       : (double?)null))
+                                                        ? src.Reviews.Where(r => r.IsPublished == true).Average(r => r.Rating)
+                                                        : (double?)null))
                 .ForMember(dest => dest.StartingPrice,
                            opt => opt.MapFrom(src => src.RoomTypes.Any(rt => rt.IsActive == true)
                                                        ? src.RoomTypes.Where(rt => rt.IsActive == true).Min(rt => rt.DefaultPrice)
@@ -60,6 +59,16 @@ namespace HotelBooking.Application.Mappings
                            opt => opt.MapFrom(src => src.HotelAmenities.Select(ha => ha.Amenity))) 
                 .ForMember(dest => dest.RoomTypes,
                            opt => opt.MapFrom(src => src.RoomTypes.Where(rt => rt.IsActive == true)));
+
+            CreateMap<Hotel, AdminHotelSummaryDto>()
+                .ForMember(dest => dest.OwnerName,
+                           opt => opt.MapFrom(src => src.OwnerUser != null ? src.OwnerUser.FullName : "N/A"))
+                .ForMember(dest => dest.OwnerEmail,
+                           opt => opt.MapFrom(src => src.OwnerUser != null ? src.OwnerUser.Email : "N/A"))
+                .ForMember(dest => dest.OwnerPhone,
+                           opt => opt.MapFrom(src => src.OwnerUser != null ? src.OwnerUser.Phone : null))
+                .ForMember(dest => dest.TotalBookings,
+                           opt => opt.MapFrom(src => src.Bookings != null ? src.Bookings.Count : 0));
         }
     }
 }

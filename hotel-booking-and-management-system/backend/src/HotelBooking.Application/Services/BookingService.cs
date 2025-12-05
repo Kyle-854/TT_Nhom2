@@ -30,24 +30,66 @@ namespace HotelBooking.Application.Services
                 throw new InvalidOperationException("Yêu cầu đặt phòng phải có ít nhất một phòng.");
             }
 
-            if (!string.IsNullOrEmpty(request.PromotionCode))
+            if (!string.IsNullOrWhiteSpace(request.PromotionCode))
             {
-                Promotion? validPromo = await _unitOfWork.BookingRepo.GetValidPromotionAsync(request.HotelId, request.PromotionCode);
+                DateTimeOffset now = DateTimeOffset.Now;
+
+                Promotion? validPromo = await _unitOfWork.BookingRepo.GetPromotionByCodeAsync(request.HotelId, request.PromotionCode, now);
                 if (validPromo == null)
                 {
-                    throw new InvalidOperationException("Mã khuyến mãi không hợp lệ, đã hết hạn hoặc không áp dụng cho khách sạn này.");
+                    throw new InvalidOperationException("Mã khuyến mãi không hợp lệ hoặc đã hết hạn.");
                 }
             }
 
             foreach (BookingRoomRequestDto room in request.Rooms)
             {
-                bool isValidDates = _unitOfWork.BookingRepo.ValidateBookingDates(room.CheckInDate, room.CheckOutDate, room.Quantity);
-                if (!isValidDates)
+                if (room.Quantity <= 0)
                 {
-                    throw new InvalidOperationException($"Dữ liệu không hợp lệ cho loại phòng {room.RoomTypeId}: Ngày check-out phải sau check-in và số lượng > 0.");
+                    throw new InvalidOperationException($"Số lượng phòng phải lớn hơn 0.");
                 }
 
-                await _unitOfWork.BookingRepo.CheckRoomAvailabilityAsync(request.HotelId, room.RoomTypeId,room.CheckInDate,room.CheckOutDate,room.Quantity);
+                if (room.CheckOutDate <= room.CheckInDate)
+                {
+                    throw new InvalidOperationException($"Ngày trả phòng phải sau ngày nhận phòng.");
+                }
+
+                (RoomType? RoomInfo, List<RoomInventory> Inventories) data = await _unitOfWork.BookingRepo.GetRoomAvailabilityDataAsync(room.RoomTypeId, room.CheckInDate, room.CheckOutDate);
+
+                if (data.RoomInfo == null)
+                {
+                    throw new KeyNotFoundException($"Loại phòng với ID {room.RoomTypeId} không tồn tại.");
+                }
+
+                if (data.RoomInfo.HotelId != request.HotelId)
+                {
+                    throw new InvalidOperationException($"Loại phòng {room.RoomTypeId} không thuộc về khách sạn {request.HotelId}.");
+                }
+
+                DateOnly currentDate = room.CheckInDate;
+                int totalRooms = data.RoomInfo.TotalRooms;
+
+                while (currentDate < room.CheckOutDate)
+                {
+                    RoomInventory? inventoryRecord = data.Inventories.FirstOrDefault(ri => ri.Date == currentDate);
+
+                    int availableRooms;
+
+                    if (inventoryRecord != null)
+                    {
+                        availableRooms = inventoryRecord.AvailableRooms;
+                    }
+                    else
+                    {
+                        availableRooms = totalRooms;
+                    }
+
+                    if (availableRooms < room.Quantity)
+                    {
+                        throw new InvalidOperationException($"Loại phòng {room.RoomTypeId} không đủ số lượng vào ngày {currentDate:dd/MM/yyyy} (Còn lại: {availableRooms}, Yêu cầu: {room.Quantity}).");
+                    }
+
+                    currentDate = currentDate.AddDays(1);
+                }
             }
 
             DataTable bookingRoomsTable = await CreateBookingRoomTypeTVP(request.Rooms);
