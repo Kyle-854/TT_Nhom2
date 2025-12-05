@@ -1,4 +1,6 @@
 import apiClient from './axiosClient';
+import { normalizeError } from './apiUtils';
+
 
 export async function login(identifier, password) {
   try {
@@ -14,16 +16,7 @@ export async function login(identifier, password) {
     }
     return data;
   } catch (err) {
-    // Chuẩn hoá lỗi để hiển thị trên UI
-    const status = err.response?.status;
-    const body = err.response?.data;
-    console.error('[ApiAuth] đăng nhập thất bại', { status, body, message: err.message });
-    const message = (body && (body.message || body.error || body.detail)) || err.message || 'Đăng nhập thất bại';
-    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
-    e.status = status;
-    e.body = body;
-    e.original = err;
-    throw e;
+    throw normalizeError(err, 'Đăng nhập thất bại');
   }
 }
 
@@ -32,14 +25,14 @@ export async function register(userData) {
     const res = await apiClient.post('/api/users/Auth/register', userData);
     return res.data;
   } catch (err) {
-    console.error('[ApiAuth] đăng ký thất bại', { status: err.response?.status, data: err.response?.data });
-    throw err;
+    throw normalizeError(err, 'Đăng ký thất bại');
   }
 }
 
 export async function getCurrentUser() {
   const endpoints = ['/api/users/Auth/user-info', '/api/users/User/me'];
   let lastError = null;
+  
   for (const ep of endpoints) {
     try {
       const res = await apiClient.get(ep);
@@ -48,7 +41,7 @@ export async function getCurrentUser() {
       lastError = err;
     }
   }
-  throw lastError || new Error('Lấy thông tin user thất bại');
+  throw normalizeError(lastError, 'Lấy thông tin user thất bại');
 }
 
 export async function changePassword({ currentPassword, newPassword }) {
@@ -59,15 +52,7 @@ export async function changePassword({ currentPassword, newPassword }) {
     });
     return res.data;
   } catch (err) {
-    const status = err.response?.status;
-    const body = err.response?.data;
-    console.error('[ApiAuth] changePassword thất bại', { status, body, message: err.message });
-    const message = (body && (body.message || body.error || body.detail)) || err.message || 'Đổi mật khẩu thất bại';
-    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
-    e.status = status;
-    e.body = body;
-    e.original = err;
-    throw e;
+    throw normalizeError(err, 'Đổi mật khẩu thất bại');
   }
 }
 
@@ -76,15 +61,7 @@ export async function forgotPassword(identifier) {
     const res = await apiClient.post('/api/users/Auth/forgot-password', { email: identifier });
     return res.data;
   } catch (err) {
-    const status = err.response?.status;
-    const body = err.response?.data;
-    console.error('[ApiAuth] forgotPassword thất bại', { status, body, message: err.message });
-    const message = (body && (body.message || body.error || body.detail)) || err.message || 'Yêu cầu đặt lại mật khẩu thất bại';
-    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
-    e.status = status;
-    e.body = body;
-    e.original = err;
-    throw e;
+    throw normalizeError(err, 'Yêu cầu đặt lại mật khẩu thất bại');
   }
 }
 
@@ -96,10 +73,7 @@ export async function resetPassword({ token, newPassword }) {
     });
     return res.data;
   } catch (err) {
-    const body = err.response?.data;
-    const message = (body && (body.message || body.error)) || 'Đặt lại mật khẩu thất bại';
-    const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
-    throw e;
+    throw normalizeError(err, 'Đặt lại mật khẩu thất bại');
   }
 }
 
