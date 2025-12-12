@@ -14,5 +14,6 @@ namespace HotelBooking.Application.Interfaces.Repositories
         Task<Booking?> GetBookingDetailsAsync(long bookingId, long customerUserId);
         Task<long> CreateBookingViaSPAsync(long customerUserId, long hotelId, DataTable bookingRooms, string currency, decimal commissionPct, string? note, string? promotionCode);
         Task<Booking?> GetBookingWithStatusAndPaymentsAsync(long bookingId);
+        Task<(bool Success, string Message)> CancelBookingViaSPAsync(long bookingId, long customerUserId);
     }
 }

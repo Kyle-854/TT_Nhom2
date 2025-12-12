@@ -20,6 +20,7 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAll([FromQuery] UserFilterDto filter)
         {
             PagedResult<UserSummaryDto>? result = await _userService.GetUsersAsync(filter);
@@ -27,6 +28,9 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(long id)
         {
             UserDetailDto? user = await _userService.GetUserDetailAsync(id);
@@ -34,6 +38,9 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(UserDetailDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Create([FromBody] AdminUserCreateDto dto)
         {
             UserDetailDto? createdUser = await _userService.CreateUserAsync(dto);
@@ -42,6 +49,9 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateProfile(long id, [FromBody] AdminUserUpdateDto dto)
         {
             await _userService.UpdateUserAsync(id, dto);
@@ -49,6 +59,8 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("{id}/status")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeStatus(long id, [FromBody] ChangeUserStatusDto dto)
         {
             await _userService.ToggleUserStatusAsync(id, dto.IsActive);
@@ -58,6 +70,8 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("{id}/role")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeRole(long id, [FromBody] ChangeUserRoleDto dto)
         {
             await _userService.ChangeUserRoleAsync(id, dto.RoleId);

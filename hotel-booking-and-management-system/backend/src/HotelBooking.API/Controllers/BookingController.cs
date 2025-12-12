@@ -57,6 +57,22 @@ namespace HotelBooking.API.Controllers
             return Ok(bookingDetail);
         }
 
+        [HttpPut("{id:long}/cancel")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> CancelBooking(long id)
+        {
+            long customerUserId = GetUserIdFromClaims();
+            if (customerUserId <= 0)
+            {
+                return Unauthorized();
+            }
+
+            await _bookingService.CancelBookingAsync(id, customerUserId);
+
+            return Ok(new {Message = "Đã hủy đơn đặt phòng thành công."});
+        }
+
         private long GetUserIdFromClaims()
         {
             Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

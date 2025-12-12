@@ -4,13 +4,13 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace HotelBooking.Application.Services
+namespace HotelBooking.Application.Authentication
 {
-    public class EmailService
+    public class EmailSender
     {
         private readonly EmailSettings _emailSettings;
 
-        public EmailService(IOptions<EmailSettings> emailSettings)
+        public EmailSender(IOptions<EmailSettings> emailSettings)
         {
             _emailSettings = emailSettings.Value;
         }

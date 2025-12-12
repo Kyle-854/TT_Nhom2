@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Newtonsoft.Json;
 using System.Data;
+using System.Data.Common;
 
 namespace HotelBooking.Infrastructure.Repositories
 {
@@ -135,6 +136,55 @@ namespace HotelBooking.Infrastructure.Repositories
                 .Include(b => b.PaymentTransactions)
                     .ThenInclude(p => p.Status)
                 .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+        }
+
+        public async Task<(bool Success, string Message)> CancelBookingViaSPAsync(long bookingId, long customerUserId)
+        {
+            DbConnection? connection = _context.Database.GetDbConnection();
+
+            if (connection.State != ConnectionState.Open)
+            {
+                await connection.OpenAsync();
+            }
+
+            using DbCommand? command = connection.CreateCommand();
+            command.CommandText = "sp_CancelBooking";
+            command.CommandType = CommandType.StoredProcedure;
+
+            DbParameter? pBookingId = command.CreateParameter();
+            pBookingId.ParameterName = "p_BookingId";
+            pBookingId.Value = bookingId;
+            command.Parameters.Add(pBookingId);
+
+            var pUserId = command.CreateParameter();
+            pUserId.ParameterName = "p_CustomerUserId";
+            pUserId.Value = customerUserId;
+            command.Parameters.Add(pUserId);
+
+            DbParameter? pSuccess = command.CreateParameter();
+            pSuccess.ParameterName = "p_IsSuccess";
+            pSuccess.Direction = ParameterDirection.Output;
+            pSuccess.DbType = DbType.Boolean;
+            command.Parameters.Add(pSuccess);
+
+            DbParameter? pMessage = command.CreateParameter();
+            pMessage.ParameterName = "p_Message";
+            pMessage.Direction = ParameterDirection.Output;
+            pMessage.DbType = DbType.String;
+            pMessage.Size = 255;
+            command.Parameters.Add(pMessage);
+
+            await command.ExecuteNonQueryAsync();
+
+            bool success = false;
+            if (pSuccess.Value != DBNull.Value)
+            {
+                success = Convert.ToBoolean(pSuccess.Value);
+            }
+
+            string message = pMessage.Value?.ToString() ?? "Không có thông báo trả về.";
+
+            return (success, message);
         }
     }
 }

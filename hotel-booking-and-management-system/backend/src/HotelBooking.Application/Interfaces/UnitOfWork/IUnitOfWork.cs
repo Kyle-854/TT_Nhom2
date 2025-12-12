@@ -5,6 +5,7 @@ namespace HotelBooking.Application.Interfaces.UnitOfWork
 {
     public interface IUnitOfWork : IAsyncDisposable
     {
+        IAmenityRepository AmenitieRepo { get; }
         IUserRepository UserRepo { get; }
         IHotelRepository HotelRepo { get; }
         IRoomTypeRepository RoomTypeRepo { get; }
@@ -21,8 +22,6 @@ namespace HotelBooking.Application.Interfaces.UnitOfWork
         IGenericRepository<AuditLog> AuditLogs { get; }
         IGenericRepository<BookingStatus> BookingStatuses { get; }
         IGenericRepository<PaymentStatus> PaymentStatuses { get; }
-        IGenericRepository<Amenity> Amenities { get; }
-
         Task<int> CompleteAsync();
     }
 }

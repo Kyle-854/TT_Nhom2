@@ -10,6 +10,7 @@ namespace HotelBooking.Infrastructure.UnitOfWork
     {
         private readonly HotelBookingDbContext _context;
 
+        private IAmenityRepository _amenitierepo;
         private IUserRepository _userrepo;
         private IHotelRepository _hotelrepo;
         private IRoomTypeRepository _roomTyperepo;
@@ -26,11 +27,22 @@ namespace HotelBooking.Infrastructure.UnitOfWork
         private IGenericRepository<AuditLog> _auditLogs;
         private IGenericRepository<BookingStatus> _bookingStatuses;
         private IGenericRepository<PaymentStatus> _paymentStatuses;
-        private IGenericRepository<Amenity> _amenities;
 
         public UnitOfWork(HotelBookingDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public IAmenityRepository AmenitieRepo
+        {
+            get
+            {
+                if (this._amenitierepo == null)
+                {
+                    this._amenitierepo = new AmenityRepository(_context);
+                }
+                return this._amenitierepo;
+            }
         }
 
         public IUserRepository UserRepo
@@ -210,18 +222,6 @@ namespace HotelBooking.Infrastructure.UnitOfWork
                     this._paymentStatuses = new GenericRepository<PaymentStatus>(_context);
                 }
                 return this._paymentStatuses;
-            }
-        }
-
-        public IGenericRepository<Amenity> Amenities
-        {
-            get
-            {
-                if (this._amenities == null)
-                {
-                    this._amenities = new GenericRepository<Amenity>(_context);
-                }
-                return this._amenities;
             }
         }
 

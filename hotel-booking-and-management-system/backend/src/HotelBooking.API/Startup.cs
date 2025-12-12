@@ -31,9 +31,10 @@ namespace HotelBooking.API
         {
             // Database
             services.AddDbContext<HotelBookingDbContext>(options =>
-            options.UseMySql(
-                Configuration.GetConnectionString("DefaultConnection"),
-                ServerVersion.AutoDetect(Configuration.GetConnectionString("DefaultConnection"))
+            options.UseMySql
+                (
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    ServerVersion.AutoDetect(Configuration.GetConnectionString("DefaultConnection"))
                 )
             );
 
@@ -49,6 +50,7 @@ namespace HotelBooking.API
             services.AddMemoryCache();
 
             // Register 
+            services.AddAutoMapper(typeof(AmenityProfile).Assembly);
             services.AddAutoMapper(typeof(UserProfile).Assembly);
             services.AddAutoMapper(typeof(HotelProfile).Assembly);
             services.AddAutoMapper(typeof(BookingProfile).Assembly);
@@ -57,8 +59,9 @@ namespace HotelBooking.API
 
             services.AddScoped<JwtTokenGenerator>();
 
-            services.AddScoped<EmailService>();
+            services.AddScoped<EmailSender>();
 
+            services.AddScoped<AmenityService>();
             services.AddScoped<AuthService>();
             services.AddScoped<BookingService>();
             services.AddScoped<HotelService>();

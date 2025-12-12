@@ -21,7 +21,7 @@ namespace HotelBooking.Application.Services
         {
             (List<Hotel> items, int totalItems) = await _unitOfWork.HotelRepo.GetHotelsForAdminAsync(filter);
 
-            var dtos = _mapper.Map<List<AdminHotelSummaryDto>>(items);
+            List<AdminHotelSummaryDto>? dtos = _mapper.Map<List<AdminHotelSummaryDto>>(items);
 
             return new PagedResult<AdminHotelSummaryDto>
             {

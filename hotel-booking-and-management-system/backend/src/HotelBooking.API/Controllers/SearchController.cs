@@ -18,6 +18,7 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet("hotels")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchHotels([FromQuery] HotelSearchRequestDto request)
         {
             PagedResult<HotelSearchResultDto>? result = await _searchService.SearchHotelsAsync(request);
@@ -25,6 +26,7 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet("suggestions")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetSuggestions([FromQuery] string query)
         {
             List<SearchSuggestionDto>? result = await _searchService.GetSuggestionsAsync(query);

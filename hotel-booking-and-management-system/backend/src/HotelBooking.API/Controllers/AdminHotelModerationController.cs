@@ -21,6 +21,7 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAllHotels([FromQuery] AdminHotelFilterDto filter)
         {
             PagedResult<AdminHotelSummaryDto>? result = await _moderationService.GetAllHotelsAsync(filter);
@@ -28,6 +29,9 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("{id}/approval")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ApproveHotel(long id, [FromBody] AdminHotelApprovalDto request)
         {
             long adminId = GetUserIdFromClaims();
@@ -37,6 +41,9 @@ namespace HotelBooking.API.Controllers
         }
 
         [HttpPut("{id}/suspension")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SuspendHotel(long id, [FromBody] AdminHotelSuspensionDto request)
         {
             long adminId = GetUserIdFromClaims();

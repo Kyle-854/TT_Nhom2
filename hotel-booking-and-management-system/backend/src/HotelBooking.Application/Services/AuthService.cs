@@ -14,12 +14,12 @@ namespace HotelBooking.Application.Services
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
         private readonly JwtTokenGenerator _jwtTokenGenerator;
-        private readonly EmailService _emailService;
+        private readonly EmailSender _emailService;
 
         private const string DEFAULT_USER_ROLE_NAME = "Customer";
         private const sbyte DEFAULT_USER_ROLE_ID = 2;
 
-        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache memoryCache, JwtTokenGenerator jwtTokenGenerator, EmailService emailService)
+        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache memoryCache, JwtTokenGenerator jwtTokenGenerator, EmailSender emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

@@ -150,6 +150,16 @@ namespace HotelBooking.Application.Services
             return _mapper.Map<BookingDetailDto>(booking);
         }
 
+        public async Task CancelBookingAsync(long bookingId, long customerUserId)
+        {
+            (bool Success, string Message) result = await _unitOfWork.BookingRepo.CancelBookingViaSPAsync(bookingId, customerUserId);
+
+            if (!result.Success)
+            {
+                throw new InvalidOperationException(result.Message);
+            }
+        }
+
 
         private async Task<DataTable> CreateBookingRoomTypeTVP(List<BookingRoomRequestDto> rooms)
         {
