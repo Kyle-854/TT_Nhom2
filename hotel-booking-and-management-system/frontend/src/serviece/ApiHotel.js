@@ -1,17 +1,7 @@
-import apiClient from './ApiAuth';
+import apiClient from './axiosClient';
+import { normalizeError } from './apiUtils';
 
-function normalizeError(err, fallbackMessage = 'Lỗi API Hotel') {
-	const status = err?.response?.status;
-	const body = err?.response?.data;
-	const message = (body && (body.message || body.error || body.detail)) || err.message || fallbackMessage;
-	const e = new Error(typeof message === 'string' ? message : JSON.stringify(message));
-	e.status = status;
-	e.body = body;
-	e.original = err;
-	return e;
-}
 
-// Lấy danh sách khách sạn, hỗ trợ params cho phân trang/loc/search
 export async function getHotels(params = {}) {
 	try {
 		const res = await apiClient.get('/api/users/Hotel', { params });
@@ -21,7 +11,6 @@ export async function getHotels(params = {}) {
 	}
 }
 
-// Lấy thông tin chi tiết một khách sạn theo id
 export async function getHotelById(id) {
 	if (!id) throw new Error('Thiếu id');
 	try {
@@ -32,7 +21,6 @@ export async function getHotelById(id) {
 	}
 }
 
-// Lấy loại phòng của một khách sạn
 export async function getHotelRoomTypes(hotelId, params = {}) {
 	if (!hotelId) throw new Error('Thiếu hotelId');
 	try {
@@ -42,10 +30,4 @@ export async function getHotelRoomTypes(hotelId, params = {}) {
 		throw normalizeError(err, 'Lấy loại phòng thất bại');
 	}
 }
-
-export default {
-	getHotels,
-	getHotelById,
-	getHotelRoomTypes,
-};
 
