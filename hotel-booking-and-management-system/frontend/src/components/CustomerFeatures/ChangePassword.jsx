@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { changePassword, forgotPassword, resetPassword, getCurrentUser } from '../../serviece/ApiAuth'
 
 const ChangePassword = () => {
-  // State cho form đổi mật khẩu (khi đã đăng nhập)
+
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -11,17 +11,17 @@ const ChangePassword = () => {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
 
-  // State quản lý việc mở/đóng dialog
+
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false)
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false)
 
-  // State cho form quên mật khẩu
+
   const [forgotIdentifier, setForgotIdentifier] = useState('')
   const [isForgotLoading, setIsForgotLoading] = useState(false)
   const [forgotError, setForgotError] = useState('')
 
-  // State cho form reset mật khẩu
-  const [resetCode, setResetCode] = useState('') // 'token' từ email
+
+  const [resetCode, setResetCode] = useState('') 
   const [newPasswordForReset, setNewPasswordForReset] = useState('')
   const [confirmNewPasswordForReset, setConfirmNewPasswordForReset] = useState('')
   const [isResetting, setIsResetting] = useState(false)
@@ -30,12 +30,12 @@ const ChangePassword = () => {
 
   const navigate = useNavigate()
 
-  // Lấy thông tin người dùng hiện tại khi component được mount
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const user = await getCurrentUser()
-        // Tự động điền email vào state `forgotIdentifier`
+
         if (user && user.email) {
           setForgotIdentifier(user.email)
         }
@@ -44,7 +44,7 @@ const ChangePassword = () => {
       }
     }
     fetchUser()
-  }, []) // Mảng rỗng đảm bảo useEffect chỉ chạy một lần
+  }, []) 
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -64,7 +64,7 @@ const ChangePassword = () => {
     try {
       await changePassword({ currentPassword, newPassword })
       setSuccess('Đổi mật khẩu thành công')
-      // Redirect to customer dashboard after short delay
+
       setTimeout(() => navigate('/customer'), 800)
     } catch (err) {
       setError(err.message || 'Đổi mật khẩu thất bại')
@@ -83,10 +83,10 @@ const ChangePassword = () => {
     setForgotError('')
     try {
       await forgotPassword(forgotIdentifier)
-      // Nếu thành công, đóng dialog quên mật khẩu và mở dialog reset mật khẩu
+    
       setIsForgotPasswordOpen(false)
       setIsResetPasswordOpen(true)
-      // Không reset forgotIdentifier vì có thể cần dùng ở bước sau
+     
     } catch (error) {
       setForgotError(error.message || 'Có lỗi xảy ra, vui lòng thử lại.')
     } finally {
@@ -110,10 +110,10 @@ const ChangePassword = () => {
 
     setIsResetting(true)
     try {
-      // API call cần token từ email và mật khẩu mới
+    
       await resetPassword({ token: resetCode, newPassword: newPasswordForReset })
-      setResetSuccess('Mật khẩu đã được đặt lại thành công! Bạn sẽ được chuyển đến trang đăng nhập.')
-      // Tự động đóng và chuyển đến trang đăng nhập sau vài giây
+      setResetSuccess('Mật khẩu đã được đặt lại thành công!')
+      
       setTimeout(() => navigate('/'), 3000)
     } catch (error) {
       setResetError(error.message || 'Mã xác nhận không hợp lệ hoặc đã hết hạn.')
@@ -214,7 +214,7 @@ const ChangePassword = () => {
                   type="text"
                   id="forgot-identifier"
                   value={forgotIdentifier}
-                  readOnly // Không cho người dùng chỉnh sửa
+                  readOnly
                   className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

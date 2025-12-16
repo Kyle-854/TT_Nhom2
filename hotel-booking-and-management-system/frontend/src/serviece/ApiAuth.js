@@ -9,7 +9,7 @@ export async function login(identifier, password) {
     });
     const data = res.data;
 
-    const token = data?.token; //Đây là đường dẫn để lấy token từ endpoint login
+    const token = data?.token; 
     if (token) {
       localStorage.setItem('authToken', token);
     }

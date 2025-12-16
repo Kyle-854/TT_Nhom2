@@ -4,7 +4,7 @@ const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname =
   ? '' 
   : 'http://160.191.245.177:8000';
 
-// Tạo instance axios
+
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -13,7 +13,7 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
-// Thêm token từ localStorage vào request
+
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
@@ -23,13 +23,20 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor xử lý response, handle 401 globally
+
 apiClient.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      // Xóa token nếu hết hạn và có thể redirect tới login
       localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userId');
+      
+      alert('Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại!');
+      
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }

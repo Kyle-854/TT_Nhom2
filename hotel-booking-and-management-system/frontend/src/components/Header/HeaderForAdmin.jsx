@@ -17,7 +17,7 @@ const HeaderForAdmin = ({ onLogout, userFullName }) => {
 
             {/* Phần giữa: Tên App */}
             <div className="text-center justify-self-center">
-              <span className="text-2xl font-bold text-blue-600">HotelBooking</span>
+              <Link to="/admin" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
             </div>
 
             {/* Phần bên phải: Menu người dùng (Desktop) / Nút hamburger (Mobile) */}

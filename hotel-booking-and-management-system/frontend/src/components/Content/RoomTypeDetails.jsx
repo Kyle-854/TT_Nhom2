@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import { createBooking } from '../../serviece/ApiBooking'
+import { useNavigate } from 'react-router-dom'
 
-// Component để hiển thị ảnh lớn (lightbox)
+
 const ImageViewer = ({ src, alt, onClose }) => {
   if (!src) return null;
 
@@ -23,11 +25,24 @@ const ImageViewer = ({ src, alt, onClose }) => {
   );
 };
 
-const RoomTypeDetails = ({ roomType, onClose }) => {
+const RoomTypeDetails = ({ roomType, hotelId: hotelIdProp, hotelName, onClose, onBooking }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [checkIn, setCheckIn] = useState(() => {
+    const d = new Date();
+    return d.toISOString().slice(0, 10);
+  });
+  const [checkOut, setCheckOut] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  });
+  const [quantity, setQuantity] = useState(1);
+  const [note, setNote] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   if (!roomType) return null
 
-  // Hàm format tiền theo định dạng Việt Nam
+
   const formatPrice = (value) => {
     if (value === null || value === undefined) return 'Liên hệ'
     try {
@@ -37,7 +52,7 @@ const RoomTypeDetails = ({ roomType, onClose }) => {
     }
   }
 
-  // Lấy dữ liệu từ backend, hỗ trợ các tên property khác nhau
+
   const roomName = roomType.name || 'Phòng';
   const capacity = roomType.capacity || '—';
   const pricePerNight = roomType.pricePerNight;
@@ -104,6 +119,104 @@ const RoomTypeDetails = ({ roomType, onClose }) => {
                     <li>Không có dữ liệu tiện nghi</li>
                   )}
                 </ul>
+              </div>
+
+              {/* Form đặt phòng */}
+              <div className="mt-4 border-t pt-4">
+                <div className="text-sm text-gray-500 mb-2">Chọn ngày</div>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="date"
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)}
+                    className="p-2 border rounded w-1/2"
+                    aria-label="Ngày nhận phòng"
+                  />
+                  <input
+                    type="date"
+                    value={checkOut}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    className="p-2 border rounded w-1/2"
+                    aria-label="Ngày trả phòng"
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <div className="text-sm text-gray-500">Số lượng phòng</div>
+                  <input
+                    type="number"
+                    min="1"
+                    max={capacity || 10}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    className="p-2 border rounded w-full"
+                    aria-label="Số lượng phòng"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <div className="text-sm text-gray-500">Ghi chú (tuỳ chọn)</div>
+                  <textarea
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="p-2 border rounded w-full"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <button
+                    onClick={async () => {
+                      const token = localStorage.getItem('authToken');
+                      if (!token) {
+                        navigate('/?showLogin=1');
+                        return;
+                      }
+
+                      if (!checkIn || !checkOut) return alert('Vui lòng chọn ngày nhận và trả phòng');
+                      if (new Date(checkOut) <= new Date(checkIn)) return alert('Ngày trả phải sau ngày nhận');
+                      if (!roomType) return alert('Dữ liệu phòng không hợp lệ');
+
+                      const hotelId = hotelIdProp ?? roomType.hotelId ?? roomType.hotel?.id;
+                      if (!hotelId) return alert('Không xác định được khách sạn để đặt phòng');
+
+                      const roomTypeId = roomType.id ?? roomType.roomTypeId;
+                      if (!roomTypeId) return alert('Không xác định được loại phòng');
+
+                      setLoading(true);
+                      try {
+                        const payload = {
+                          hotelId,
+                          hotelName: hotelName || roomType.hotelName || roomType.hotel?.name,
+                          rooms: [
+                            {
+                                roomTypeId,
+                                roomTypeName: roomType.name || roomType.roomTypeName,
+                                nightlyRate: pricePerNight ?? roomType.pricePerNight ?? roomType.price,
+                                checkInDate: checkIn,
+                                checkOutDate: checkOut,
+                                quantity: Number(quantity) || 1,
+                            },
+                          ],
+                          note: note || undefined,
+                        };
+
+                        sessionStorage.setItem('pendingBooking', JSON.stringify(payload));
+                        if (onClose) onClose();
+                        if (onBooking) onBooking();
+                        navigate('/payment');
+                      } catch (err) {
+                        alert(err?.message || 'Đặt phòng thất bại');
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                    className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 disabled:opacity-60"
+                  >
+                    {loading ? 'Đang xử lý...' : 'Đặt phòng'}
+                  </button>
+                </div>
               </div>
             </aside>
           </div>

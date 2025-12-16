@@ -1,11 +1,13 @@
 import './App.css'
 import Header from './components/Header/Header'
 import Content from './components/Content/Content'
+import PaymentPage from './components/CustomerFeatures/PaymentPage'
 import HeaderForCustomer from './components/Header/HeaderForCustomer'
 import HeaderForAdmin from './components/Header/HeaderForAdmin'
 import HeaderForHotel from './components/Header/HeaderForHotel'
 import ContentForHotel from './components/Content/ContentForHotel'
 import ChangePassword from './components/CustomerFeatures/ChangePassword'
+import Profile from './components/CustomerFeatures/Profile'
 import { logout } from './serviece/ApiAuth'
 
 import { useState, useEffect } from 'react'
@@ -13,11 +15,11 @@ import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-
 
 function App() {
   const [userRole, setUserRole] = useState(null); // null, 'customer', 'hotelowner', 'admin'
-  const [userFullName, setUserFullName] = useState(''); // Lưu fullName từ login response
+  const [userFullName, setUserFullName] = useState('');
   const navigate = useNavigate()
   const location = useLocation();
 
-  // Logic đăng nhập từ API backend
+
   const handleLogin = (loginResponse) => {
     // Backend trả về roleName: "HotelOwner" | "Admin" | "Customer"
     // Path: "/hotelowner", "/admin", "/customer"
@@ -52,19 +54,17 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      // Gọi API logout từ backend (sẽ xóa token cục bộ trong ApiAuth)
       await logout();
     } catch (err) {
       console.error('[App] lỗi khi đăng xuất:', err);
     } finally {
-      // Luôn xóa state và redirect, dù API thành công hay thất bại
       setUserRole(null);
       setUserFullName('');
       navigate('/');
     }
   };
 
-  // Khi userRole thay đổi, điều hướng tới route phù hợp
+
   useEffect(() => {
     if (userRole && location.pathname === '/') {
       navigate(`/${userRole}`);
@@ -90,10 +90,31 @@ function App() {
         </>
       } />
 
+      <Route path="/payment" element={
+        userRole === 'customer' ? (
+          <>
+            <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
+            <PaymentPage />
+          </>
+        ) : (
+          <>
+            <Header onLogin={handleLogin} />
+            <PaymentPage />
+          </>
+        )
+      } />
+
       <Route path="/customer/change-password" element={
         <>
           <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
           <ChangePassword />
+        </>
+      } />
+
+      <Route path="/customer/profile" element={
+        <>
+          <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
+          <Profile />
         </>
       } />
 
