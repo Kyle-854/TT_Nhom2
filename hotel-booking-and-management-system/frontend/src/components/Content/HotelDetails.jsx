@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import RoomTypeDetails from './RoomTypeDetails'
+import ReviewPage from '../CustomerFeatures/ReviewPage'
 import { getHotelRoomTypes } from '../../serviece/ApiHotel'
+import { getReviewsByHotel } from '../../serviece/ApiReview'
 
 function Star({ filled }) {
   return (
@@ -16,7 +18,7 @@ function Star({ filled }) {
   )
 }
 
-// Component để hiển thị ảnh lớn (lightbox)
+
 const ImageViewer = ({ src, alt, onClose }) => {
   if (!src) return null;
 
@@ -39,16 +41,20 @@ const ImageViewer = ({ src, alt, onClose }) => {
   );
 };
 
-const HotelDetails = ({ hotel, onClose }) => {
+const HotelDetails = ({ hotel, onClose, onBooking, zIndex = 50 }) => {
   const [selectedRoomType, setSelectedRoomType] = useState(null)
   const [roomTypes, setRoomTypes] = useState([])
   const [loadingRooms, setLoadingRooms] = useState(false)
   const [roomError, setRoomError] = useState(null)
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [reviews, setReviews] = useState([])
+  const [loadingReviews, setLoadingReviews] = useState(false)
+  const [reviewError, setReviewError] = useState(null)
+  const [selectedReview, setSelectedReview] = useState(null)
   
   const hotelId = hotel ?.hotelId;
 
-  // Fetch room types từ backend endpoint
+
   useEffect(() => {
     if (!hotelId) return
 
@@ -70,12 +76,34 @@ const HotelDetails = ({ hotel, onClose }) => {
     fetchRoomTypes()
   }, [hotelId])
 
+ 
+  useEffect(() => {
+    if (!hotelId) return
+
+    const fetchReviews = async () => {
+      setLoadingReviews(true)
+      setReviewError(null)
+      try {
+        const data = await getReviewsByHotel(hotelId)
+        let reviewsList = Array.isArray(data) ? data : (data?.data || [])
+        setReviews(reviewsList)
+      } catch (err) {
+        setReviewError(err.message || 'Lấy đánh giá thất bại')
+        setReviews([])
+      } finally {
+        setLoadingReviews(false)
+      }
+    }
+
+    fetchReviews()
+  }, [hotelId])
+
   if (!hotel) return null
 
   const filledStars = Math.max(0, Math.min(5, Math.round(hotel.starRating || 0)))
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/40">
+    <div className="fixed inset-0 flex items-start justify-center p-4 bg-black/40" style={{ zIndex }}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-xl font-semibold">{hotel.name}</h3>
@@ -122,6 +150,47 @@ const HotelDetails = ({ hotel, onClose }) => {
 
               <p className="mt-3 text-gray-700 whitespace-pre-line">{hotel.description || 'Không có mô tả.'}</p>
 
+              {/* Reviews Section */}
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-3">Đánh giá từ khách hàng</h4>
+                {loadingReviews && <div className="text-sm text-gray-500">Đang tải đánh giá...</div>}
+                {reviewError && <div className="text-sm text-red-600">Lỗi: {reviewError}</div>}
+                {!loadingReviews && !reviewError && (
+                  <div className="space-y-3">
+                    {reviews && reviews.length > 0 ? (
+                      reviews.map(review => (
+                        <button
+                          key={review.reviewId || review.id}
+                          onClick={() => setSelectedReview(review)}
+                          className="w-full border rounded-lg p-3 bg-white hover:shadow-md hover:border-indigo-300 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 text-left"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="flex">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <span key={i} className="inline-block">
+                                    <Star filled={i < (review.rating || 0)} />
+                                  </span>
+                                ))}
+                              </div>
+                              <span className="text-sm font-medium text-gray-700">{review.rating || 0}/5</span>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {review.createdAt ? new Date(review.createdAt).toLocaleDateString('vi-VN') : ''}
+                            </span>
+                          </div>
+                          <h5 className="font-medium text-gray-900">{review.title || 'Không có tiêu đề'}</h5>
+                          <p className="text-sm text-gray-700 mt-1 line-clamp-2">{review.content || review.comment || 'Không có nội dung'}</p>
+                          <p className="text-xs text-gray-500 mt-2">Khách: {review.userName || review.guestName || 'Ẩn danh'}</p>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="text-sm text-gray-600">Chưa có đánh giá nào</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="mt-4 text-sm text-gray-600">
                       <div><strong>Địa chỉ:</strong> {hotel.address || '—'}</div>
 
@@ -133,7 +202,7 @@ const HotelDetails = ({ hotel, onClose }) => {
                         <div className="mt-3 w-full h-48 sm:h-64 rounded overflow-hidden">
                           <iframe
                             title="hotel-location"
-                            src={`https://www.google.com/maps?q=${hotel.latitude},${hotel.longitude}&z=15&output=embed`}
+                            src={`https://maps.google.com/maps?q=${hotel.latitude},${hotel.longitude}&hl=vi&z=15&output=embed`}
                             className="w-full h-full border-0"
                             allowFullScreen
                             loading="lazy"
@@ -159,7 +228,7 @@ const HotelDetails = ({ hotel, onClose }) => {
           <aside className="lg:col-span-1 bg-gray-50 p-4 rounded">
             <div className="mb-4">
               <div className="text-sm text-gray-500">Điểm trung bình</div>
-              <div className="text-2xl font-bold">{hotel.averageUserRating !== null && hotel.averageUserRating !== undefined ? `${hotel.averageUserRating}/10` : '—/10'}</div>
+              <div className="text-2xl font-bold">{hotel.averageUserRating !== null && hotel.averageUserRating !== undefined ? `${hotel.averageUserRating}/5` : '—/5'}</div>
               <div className="text-sm text-gray-500">{hotel.reviewCount ?? 0} đánh giá</div>
             </div>
 
@@ -209,7 +278,11 @@ const HotelDetails = ({ hotel, onClose }) => {
         </div>
       </div>
       {selectedRoomType && (
-        <RoomTypeDetails roomType={selectedRoomType} onClose={() => setSelectedRoomType(null)} />
+        <RoomTypeDetails roomType={selectedRoomType} hotelId={hotelId} hotelName={hotel.name} onClose={() => setSelectedRoomType(null)} onBooking={onBooking} />
+      )}
+
+      {selectedReview && (
+        <ReviewPage review={selectedReview} onClose={() => setSelectedReview(null)} />
       )}
 
       <ImageViewer 

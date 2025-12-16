@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Header.css';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login, register, forgotPassword, resetPassword } from '../../serviece/ApiAuth';
+import Search from '../Search/Search';
 
 const Header = ({ onLogin }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,13 +10,13 @@ const Header = ({ onLogin }) => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
-  // State cho form đăng nhập
+
   const [emailOrPhoneNumber, setEmailOrPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // State cho form đăng ký
+
   const [registerFullName, setRegisterFullName] = useState('');
   const [registerPhone, setRegisterPhone] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
@@ -24,14 +26,14 @@ const Header = ({ onLogin }) => {
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-  // State cho luồng quên/reset mật khẩu
+
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [forgotIdentifier, setForgotIdentifier] = useState('');
   const [isForgotLoading, setIsForgotLoading] = useState(false);
   const [forgotError, setForgotError] = useState('');
 
-  // State cho form reset mật khẩu
-  const [resetCode, setResetCode] = useState(''); // 'token' từ email
+
+  const [resetCode, setResetCode] = useState(''); 
   const [newPasswordForReset, setNewPasswordForReset] = useState('');
   const [confirmNewPasswordForReset, setConfirmNewPasswordForReset] = useState('');
   const [isResetting, setIsResetting] = useState(false);
@@ -46,7 +48,7 @@ const Header = ({ onLogin }) => {
 
     try {
       const response = await login(emailOrPhoneNumber, password);
-      // Response có thể chứa token và thông tin người dùng tuỳ backend
+
       if (response) {
         if (typeof onLogin === 'function') onLogin(response);
         setIsLoginOpen(false);
@@ -55,10 +57,10 @@ const Header = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login failed:', error);
-      // Lỗi có thể là Error chứa message, hoặc là lỗi từ axios
+
       let message = 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.';
       if (error?.body) {
-        // Lỗi đã được chuẩn hoá từ ApiAuth
+
         message = error.body?.message || error.body?.error || JSON.stringify(error.body);
       } else if (error?.message) {
         try {
@@ -73,12 +75,25 @@ const Header = ({ onLogin }) => {
     }
   };
 
+  const navigate = useNavigate();
+
+
+  const location = useLocation();
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get('showLogin') === '1') setIsLoginOpen(true);
+    } catch (e) {
+     
+    }
+  }, [location.search]);
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setRegisterError('');
     setRegisterSuccess('');
 
-    // Kiểm tra: các trường bắt buộc đã được nhập
+  
     if (!registerFullName.trim()) {
       setRegisterError('Vui lòng nhập họ và tên.');
       return;
@@ -100,7 +115,7 @@ const Header = ({ onLogin }) => {
       return;
     }
 
-    // Kiểm tra: mật khẩu và xác nhận mật khẩu phải khớp
+  
     if (registerPassword !== registerConfirmPassword) {
       setRegisterError('Mật khẩu và xác nhận mật khẩu không trùng khớp.');
       return;
@@ -109,7 +124,7 @@ const Header = ({ onLogin }) => {
     setIsRegisterLoading(true);
 
     try {
-      // Gọi API đăng ký, chỉ gửi password (không gửi confirmPassword)
+  
       await register({
         fullName: registerFullName,
         phone: registerPhone,
@@ -118,7 +133,7 @@ const Header = ({ onLogin }) => {
       });
       
 
-      // Thành công: hiển thị thông báo và đặt lại form
+    
       setRegisterSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
       setRegisterFullName('');
       setRegisterPhone('');
@@ -126,7 +141,7 @@ const Header = ({ onLogin }) => {
       setRegisterPassword('');
       setRegisterConfirmPassword('');
 
-      // Tự động đóng dialog đăng ký sau 2 giây và mở dialog đăng nhập
+    
       setTimeout(() => {
         setIsRegisterOpen(false);
         setIsLoginOpen(true);
@@ -159,7 +174,7 @@ const Header = ({ onLogin }) => {
     setForgotError('');
     try {
       await forgotPassword(forgotIdentifier);
-      // Nếu thành công, đóng dialog quên mật khẩu và mở dialog reset mật khẩu
+    
       setIsForgotPasswordOpen(false);
       setIsResetPasswordOpen(true);
     } catch (error) {
@@ -185,10 +200,10 @@ const Header = ({ onLogin }) => {
 
     setIsResetting(true);
     try {
-      // API call cần token từ email và mật khẩu mới
+   
       await resetPassword({ token: resetCode, newPassword: newPasswordForReset });
       setResetSuccess('Mật khẩu đã được đặt lại thành công! Vui lòng đăng nhập lại.');
-      // Tự động đóng và mở dialog đăng nhập sau vài giây
+     
       setTimeout(() => {
         setIsResetPasswordOpen(false);
         setIsLoginOpen(true);
@@ -209,7 +224,7 @@ const Header = ({ onLogin }) => {
             {/* Phần bên trái: Tên App (Desktop) */}
             <div className="justify-self-start">
               {/* Tên App (Desktop) */}
-              <span className="hidden md:block text-2xl font-bold text-blue-600">HotelBooking</span>
+              <Link to="/" className="hidden md:block text-2xl font-bold text-blue-600">HotelBooking</Link>
               <div className="md:hidden w-6 h-6"></div> {/* Placeholder để căn giữa title trên mobile */}
             </div>
 
@@ -217,12 +232,11 @@ const Header = ({ onLogin }) => {
             <div className="md:flex md:justify-center md:px-8">
               {/* Tên App (Mobile) */}
               <div className="md:hidden text-center justify-self-center">
-                <span className="text-2xl font-bold text-blue-600">HotelBooking</span>
+                <Link to="/" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
               </div>
               {/* Thanh tìm kiếm (Desktop) */}
               <div className="hidden md:flex w-[80%]">
-                <input type="text" placeholder="Tìm kiếm khách sạn..." className="w-full px-4 py-2 border border-gray-300 rounded-l-full" />
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-r-full hover:bg-blue-700">Tìm kiếm</button>
+                <Search />
               </div>
             </div>
 
@@ -243,10 +257,7 @@ const Header = ({ onLogin }) => {
 
           {/* Thanh tìm kiếm (Mobile) */}
           <div className="w-full md:hidden">
-            <div className="flex w-full">
-              <input type="text" placeholder="Tìm kiếm..." className="w-full px-4 py-2 border border-gray-300 rounded-l-full" />
-              <button className="px-4 bg-blue-600 text-white rounded-r-full hover:bg-blue-700">Tìm</button>
-            </div>
+            <Search />
           </div>
 
           {/* Menu mobile (nếu có) */}
@@ -261,14 +272,14 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Đăng nhập --- */}
       {isLoginOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
-          onClick={() => setIsLoginOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          onClick={() => { setIsLoginOpen(false); navigate('/'); }}
         >
           <div
             className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setIsLoginOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+            <button onClick={() => { setIsLoginOpen(false); navigate('/'); }} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -321,14 +332,14 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Đăng ký --- */}
       {isRegisterOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
-          onClick={() => setIsRegisterOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          onClick={() => { setIsRegisterOpen(false); navigate('/'); }}
         >
           <div
             className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setIsRegisterOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+            <button onClick={() => { setIsRegisterOpen(false); navigate('/'); }} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -413,14 +424,14 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Quên mật khẩu --- */}
       {isForgotPasswordOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
-          onClick={() => setIsForgotPasswordOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          onClick={() => { setIsForgotPasswordOpen(false); navigate('/'); }}
         >
           <div
             className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setIsForgotPasswordOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+            <button onClick={() => { setIsForgotPasswordOpen(false); navigate('/'); }} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -458,14 +469,14 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Reset Mật khẩu --- */}
       {isResetPasswordOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
-          onClick={() => setIsResetPasswordOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          onClick={() => { setIsResetPasswordOpen(false); navigate('/'); }}
         >
           <div
             className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setIsResetPasswordOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+            <button onClick={() => { setIsResetPasswordOpen(false); navigate('/'); }} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>

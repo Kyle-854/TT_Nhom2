@@ -1,14 +1,14 @@
 import React, { useState, useCallback, Suspense, lazy } from 'react';
 import { BuildingOffice2Icon, KeyIcon, CalendarDaysIcon, ChartBarIcon, ChatBubbleLeftRightIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 
-// Lazy loading các component
+
 const ThongTinKhachSan = lazy(() => import('../ChucNangChoKhachSan/ThongTinKhachSan'));
 const QuanLyDanhSachPhong = lazy(() => import('../ChucNangChoKhachSan/QuanLyDanhSachPhong'));
 const QuanLyDatPhong = lazy(() => import('../ChucNangChoKhachSan/QuanLyDatPhong'));
 const ThongKeDoanhThu = lazy(() => import('../ChucNangChoKhachSan/ThongKeDoanhThu'));
 const PhanHoiTuKhachHang = lazy(() => import('../ChucNangChoKhachSan/PhanHoiTuKhachHang'));
 
-// Ánh xạ key với component constructor, thay vì instance
+
 const componentMap = {
   ThongTinKhachSan,
   QuanLyDanhSachPhong,
@@ -17,7 +17,7 @@ const componentMap = {
   PhanHoiTuKhachHang,
 };
 
-// Đưa cấu trúc menu ra ngoài component để tránh tạo lại mỗi lần render
+
 const menuItems = [
   { id: 1, name: "Thông tin khách sạn", componentKey: "ThongTinKhachSan", icon: <BuildingOffice2Icon className="h-6 w-6" /> },
   { id: 2, name: "Quản lý danh sách phòng", componentKey: "QuanLyDanhSachPhong", icon: <KeyIcon className="h-6 w-6" /> },
@@ -27,13 +27,10 @@ const menuItems = [
 ];
 
 const ContentForHotel = ({ onLogout }) => {
-  // State để lưu component đang được chọn, mặc định là 'Thông tin khách sạn'
+
   const [selectedComponentKey, setSelectedComponentKey] = useState("ThongTinKhachSan");
-  // State để quản lý trạng thái thu gọn của sidebar
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // State để quản lý menu trên mobile
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // State để hiển thị loading khi đang đăng xuất
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const toggleMobileMenu = useCallback(() => {
@@ -46,12 +43,12 @@ const ContentForHotel = ({ onLogout }) => {
 
   const handleMenuItemClick = useCallback((componentKey) => {
     setSelectedComponentKey(componentKey);
-    setIsMobileMenuOpen(false); // Tự động đóng menu khi chọn
+    setIsMobileMenuOpen(false); 
   }, []);
 
   const handleLogout = useCallback(async (e) => {
     e.preventDefault();
-    if (isLoggingOut) return; // Ngăn chặn multiple click
+    if (isLoggingOut) return; 
     
     setIsLoggingOut(true);
     try {
@@ -88,7 +85,7 @@ const ContentForHotel = ({ onLogout }) => {
       )}
 
       <div className="flex"> {/* Chuyển sang flexbox để dễ quản lý chiều rộng */}
-      {/* Phần 1: Menu bên trái (30% trên desktop) - Cố định */}
+      {/* Phần 1: Menu bên trái (30% trên desktop)*/}
       <aside className={`
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         fixed top-[84px] left-0 h-[calc(100vh-84px)] bg-white p-4 z-40 md:translate-x-0
@@ -119,7 +116,7 @@ const ContentForHotel = ({ onLogout }) => {
                       ${'text-gray-800 hover:bg-blue-100'}
                       ${ 
                       selectedComponentKey === item.componentKey 
-                        ? 'bg-blue-600 text-white' // Style cho mục được chọn
+                        ? 'bg-blue-600 text-white' 
                         : ''
                     }`}
                   >
@@ -155,7 +152,7 @@ const ContentForHotel = ({ onLogout }) => {
         </div>
       </aside>
 
-      {/* Phần 2: Vùng nội dung bên phải (70% trên desktop) - Có thể cuộn */}
+      {/* Phần 2: Vùng nội dung bên phải (70% trên desktop)*/}
       <main className="flex-grow p-4 md:p-8">
         <Suspense fallback={<div>Đang tải...</div>}>
           <SelectedComponent />

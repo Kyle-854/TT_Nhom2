@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
 import './Header.css';
 import { Link, useNavigate } from 'react-router-dom';
+import BookingHistory from '../CustomerFeatures/BookingHistory';
+import Search from '../Search/Search';
 
 const HeaderForCustomer = ({ onLogout, userFullName }) => {
-  // Quản lý trạng thái menu trực tiếp trong component
+ 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   
-  // Hàm để bật/tắt menu
+  
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
   const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
   
   const navigate = useNavigate()
 
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   const goChangePassword = () => {
     setIsProfileMenuOpen(false)
     setIsMenuOpen(false)
     navigate('/customer/change-password')
+  }
+
+  const goProfile = () => {
+    setIsProfileMenuOpen(false)
+    setIsMenuOpen(false)
+    navigate('/customer/profile')
   }
 
   return (
@@ -28,7 +38,7 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
             {/* Phần bên trái: Tên App (Desktop) */}
             <div className="justify-self-start">
               {/* Tên App (Desktop) */}
-              <span className="hidden md:block text-2xl font-bold text-blue-600">HotelBooking</span>
+              <Link to="/customer" className="hidden md:block text-2xl font-bold text-blue-600">HotelBooking</Link>
               <div className="md:hidden w-6 h-6"></div> {/* Placeholder để căn giữa title trên mobile */}
             </div>
 
@@ -36,12 +46,11 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
             <div className="md:flex md:justify-center md:px-8">
               {/* Tên App (Mobile) */}
               <div className="md:hidden text-center justify-self-center">
-                <span className="text-2xl font-bold text-blue-600">HotelBooking</span>
+                <Link to="/customer" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
               </div>
               {/* Thanh tìm kiếm (Desktop) */}
               <div className="hidden md:flex w-[80%]">
-                <input type="text" placeholder="Tìm kiếm khách sạn..." className="w-full px-4 py-2 border border-gray-300 rounded-l-full" />
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-r-full hover:bg-blue-700">Tìm kiếm</button>
+                <Search />
               </div>
             </div>
 
@@ -58,24 +67,16 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
                 {isProfileMenuOpen && (
                   <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
-                      <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
+                      <button type="button" onClick={goProfile} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
                         Hồ sơ cá nhân
-                      </Link>
+                      </button>
                       <button type="button" onClick={goChangePassword} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                         Đổi mật khẩu
                       </button>
-                      <Link to="/notifications" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 14h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
-                        Thông báo
-                      </Link>
-                      <Link to="/history" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v4a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" /></svg>
-                        Lịch sử
-                      </Link>
+                      <button onClick={() => setIsHistoryOpen(true)} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+                        Lịch sử đặt phòng
+                      </button>
                       <button onClick={onLogout} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1-0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" /></svg>
                         Đăng xuất
                       </button>
                     </div>
@@ -94,40 +95,41 @@ const HeaderForCustomer = ({ onLogout, userFullName }) => {
 
           {/* Thanh tìm kiếm (Mobile) */}
           <div className="w-full md:hidden">
-            <div className="flex w-full">
-              <input type="text" placeholder="Tìm kiếm..." className="w-full px-4 py-2 border border-gray-300 rounded-l-full" />
-              <button className="px-4 bg-blue-600 text-white rounded-r-full hover:bg-blue-700">Tìm</button>
-            </div>
+            <Search />
           </div>
 
           {/* Menu mobile */}
           {isMenuOpen && (
             <div className="md:hidden border-t border-gray-200 pt-4 space-y-1">
               <span className="block px-4 py-2 text-base font-medium text-gray-800">Xin chào {userFullName}</span>
-              <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
+              <button type="button" onClick={goProfile} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
                 Hồ sơ cá nhân
-              </Link>
+              </button>
               <button type="button" onClick={goChangePassword} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 Đổi mật khẩu
               </button>
-              <Link to="/notifications" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 14h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
-                Thông báo
-              </Link>
-              <Link to="/history" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v4a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" /></svg>
-                Lịch sử
-              </Link>
+              <button onClick={() => setIsHistoryOpen(true)} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
+                Lịch sử đặt phòng
+              </button>
               <button onClick={onLogout} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1-0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" /></svg>
                 Đăng xuất
               </button>
             </div>
           )}
         </div>
       </header>
+      {isHistoryOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4">
+          <div className="fixed inset-0 bg-black opacity-50" onClick={() => setIsHistoryOpen(false)} />
+          <div className="relative bg-white rounded-lg shadow-lg w-full max-w-3xl z-60 p-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-lg font-semibold">Lịch sử đặt phòng</h3>
+              <button onClick={() => setIsHistoryOpen(false)} className="px-2 py-1 text-sm bg-gray-200 rounded">Đóng</button>
+            </div>
+            <BookingHistory />
+          </div>
+        </div>
+      )}
     </>
   );
 };

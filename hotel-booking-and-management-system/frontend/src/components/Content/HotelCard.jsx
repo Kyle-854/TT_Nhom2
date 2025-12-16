@@ -20,7 +20,7 @@ const HotelCard = ({
   starRating = 0, // 0-5
   city = '',
   country = '',
-  averageUserRating = null, // số trên thang 10
+  averageUserRating = null, // số trên thang 5
   startingPrice = null, // giá 
   onClick = null,
 }) => {
@@ -65,7 +65,7 @@ const HotelCard = ({
             <div>
               <div className="text-sm text-gray-500">Điểm người dùng</div>
               <div className="text-lg font-bold text-gray-800">
-                {averageUserRating !== null && averageUserRating !== undefined ? `${averageUserRating}/10` : '—/10'}
+                {averageUserRating !== null && averageUserRating !== undefined ? `${averageUserRating}/5` : '—/5'}
               </div>
             </div>
 

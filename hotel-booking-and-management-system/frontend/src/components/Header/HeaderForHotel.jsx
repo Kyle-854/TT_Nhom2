@@ -1,5 +1,6 @@
 import React from 'react';
 import './Header.css';
+import { Link } from 'react-router-dom';
 
 const HeaderForHotel = ({ userFullName }) => {
   return (
@@ -11,7 +12,7 @@ const HeaderForHotel = ({ userFullName }) => {
           <div />
           {/* Cột giữa: Tên web */}
           <div className="text-center">
-            <span className="text-2xl font-bold text-blue-600">HotelBooking</span>
+            <Link to="/hotelowner" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
           </div>
           {/* Cột phải: Lời chào */}
           <div className="text-right">
@@ -20,7 +21,7 @@ const HeaderForHotel = ({ userFullName }) => {
         </div>
         {/* Layout cho Mobile (<md) */}
         <div className="md:hidden flex flex-col items-center">
-          <span className="text-2xl font-bold text-blue-600">HotelBooking</span>
+          <Link to="/hotelowner" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
           <span className="text-sm text-gray-600 mt-1">Xin chào {userFullName}</span>
         </div>
       </header>
