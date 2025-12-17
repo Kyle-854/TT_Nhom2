@@ -204,7 +204,7 @@ const RoomTypeDetails = ({ roomType, hotelId: hotelIdProp, hotelName, onClose, o
                         sessionStorage.setItem('pendingBooking', JSON.stringify(payload));
                         if (onClose) onClose();
                         if (onBooking) onBooking();
-                        navigate('/payment');
+                        navigate('/customer/payment');
                       } catch (err) {
                         alert(err?.message || 'Đặt phòng thất bại');
                       } finally {

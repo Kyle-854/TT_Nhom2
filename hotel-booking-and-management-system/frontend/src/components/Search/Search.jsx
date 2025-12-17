@@ -21,9 +21,9 @@ const Search = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState(null);
   
-
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
+  // ĐÃ XÓA SortBy khỏi state filters
   const [filters, setFilters] = useState({ 
     Location: '', 
     CheckInDate: '', 
@@ -32,8 +32,7 @@ const Search = () => {
     Children: '', 
     Rooms: '', 
     Page: '', 
-    PageSize: '', 
-    SortBy: '' 
+    PageSize: ''
   });
 
   const wrapperRef = useRef(null);
@@ -119,12 +118,10 @@ const Search = () => {
     debouncedFetch(query);
   }, [query, debouncedFetch]);
 
- 
   const handleHotelClick = async (summaryHotel) => {
     const hotelId = summaryHotel.hotelId || summaryHotel.id;
     
     if (!hotelId) {
-     
       setSelectedHotel(summaryHotel);
       return;
     }
@@ -132,13 +129,10 @@ const Search = () => {
     setIsLoadingDetail(true); 
     try {
       const fullDetailRes = await getHotelById(hotelId);
-      
       const fullHotelData = Array.isArray(fullDetailRes) ? fullDetailRes[0] : (fullDetailRes?.data || fullDetailRes);
-
       setSelectedHotel(fullHotelData);
     } catch (error) {
       console.error("Lỗi lấy chi tiết khách sạn:", error);
-    
       setSelectedHotel(summaryHotel);
     } finally {
       setIsLoadingDetail(false); 
@@ -153,10 +147,8 @@ const Search = () => {
     
     const hotelId = item?.hotelId || item?.id || item?.value || item?.hotelID;
     if (hotelId) {
-     
       handleHotelClick({ hotelId: hotelId });
     } else {
-    
       performSearch({ ...filters, Location: text, query: text }).then(() => setShowResultsPopup(true));
     }
   };
@@ -164,7 +156,6 @@ const Search = () => {
   const cleanParams = (params) => {
     const cleaned = {};
     Object.keys(params).forEach(key => {
-    
       if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
         cleaned[key] = params[key];
       }
@@ -180,7 +171,6 @@ const Search = () => {
       if (!p.query && query) p.query = query;
 
       p = cleanParams(p); 
-    
       
       const res = await searchHotels(p);
       setResults(res);
@@ -219,13 +209,11 @@ const Search = () => {
     }
   };
 
- 
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
     setShowSuggestions(false);
     const res = await performSearch({ ...filters, query });
     
-  
     if (res) {
       const list = Array.isArray(res) ? res : (res.items || (res.data ? (Array.isArray(res.data) ? res.data : [res.data]) : null));
       if (Array.isArray(list) && list.length === 1) {
@@ -238,7 +226,7 @@ const Search = () => {
 
   return (
     <>
-      {/* Loading Overlay: Hiện khi click vào thẻ để xem chi tiết */}
+      {/* Loading Overlay */}
       {isLoadingDetail && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
           <div className="bg-white p-4 rounded shadow-lg flex items-center gap-3">
@@ -275,59 +263,99 @@ const Search = () => {
           </ul>
         )}
 
-        {/* Modal Tìm kiếm Nâng cao */}
+        {/* Modal Tìm kiếm Nâng cao (Đã chỉnh sửa bố cục và bỏ SortBy) */}
         {advancedModalOpen && (
           <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4" onClick={() => setAdvancedModalOpen(false)}>
             <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-lg font-semibold mb-4 text-center sm:text-left">Tìm nâng cao</h3>
+              <h3 className="text-xl font-bold mb-6 text-center text-gray-800">Tìm kiếm nâng cao</h3>
               <form onSubmit={async (e) => {
                 e.preventDefault();
                 setAdvancedModalOpen(false);
-                
                 await performSearch({ ...filters, query });
-                
-                setShowResultsPopup(true); 
-                
-              }} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                
-                {/* Form Inputs (đã rút gọn cho gọn code, giữ nguyên logic của bạn) */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Địa điểm</label>
-                  <input id="filter-location" value={filters.Location} onChange={(e) => setFilters(f => ({ ...f, Location: e.target.value }))} placeholder="Nhập tên thành phố..." className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ngày nhận phòng</label>
-                  <input type="date" value={filters.CheckInDate} onChange={(e) => setFilters(f => ({ ...f, CheckInDate: e.target.value }))} className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ngày trả phòng</label>
-                  <input type="date" value={filters.CheckOutDate} onChange={(e) => setFilters(f => ({ ...f, CheckOutDate: e.target.value }))} className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Người lớn</label>
-                  <input type="number" min="1" value={filters.Adults} onChange={(e) => setFilters(f => ({ ...f, Adults: e.target.value }))} className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trẻ em</label>
-                  <input type="number" min="0" value={filters.Children} onChange={(e) => setFilters(f => ({ ...f, Children: e.target.value }))} className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Số phòng</label>
-                  <input type="number" min="1" value={filters.Rooms} onChange={(e) => setFilters(f => ({ ...f, Rooms: e.target.value }))} className="w-full px-3 py-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sắp xếp</label>
-                  <select value={filters.SortBy} onChange={(e) => setFilters(f => ({ ...f, SortBy: e.target.value }))} className="w-full px-3 py-2 border rounded">
-                    <option value="">Mặc định</option>
-                    <option value="price_asc">Giá: Thấp đến Cao</option>
-                    <option value="price_desc">Giá: Cao đến Thấp</option>
-                    <option value="rating">Đánh giá sao</option>
-                  </select>
+                setShowResultsPopup(true);
+              }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nhóm Địa điểm */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Địa điểm</label>
+                    <input 
+                      id="filter-location" 
+                      value={filters.Location} 
+                      onChange={(e) => setFilters(f => ({ ...f, Location: e.target.value }))} 
+                      placeholder="Nhập tên thành phố, địa danh..." 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                    />
+                  </div>
+
+                  {/* Nhóm Thời gian */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày nhận phòng</label>
+                    <input 
+                      type="date" 
+                      value={filters.CheckInDate} 
+                      onChange={(e) => setFilters(f => ({ ...f, CheckInDate: e.target.value }))} 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày trả phòng</label>
+                    <input 
+                      type="date" 
+                      value={filters.CheckOutDate} 
+                      onChange={(e) => setFilters(f => ({ ...f, CheckOutDate: e.target.value }))} 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                    />
+                  </div>
+
+                  {/* Nhóm Khách & Phòng */}
+                  <div className="md:col-span-2 grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Người lớn</label>
+                      <input 
+                        type="number" 
+                        min="1" 
+                        value={filters.Adults} 
+                        onChange={(e) => setFilters(f => ({ ...f, Adults: e.target.value }))} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Trẻ em</label>
+                      <input 
+                        type="number" 
+                        min="0" 
+                        value={filters.Children} 
+                        onChange={(e) => setFilters(f => ({ ...f, Children: e.target.value }))} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Số phòng</label>
+                      <input 
+                        type="number" 
+                        min="1" 
+                        value={filters.Rooms} 
+                        onChange={(e) => setFilters(f => ({ ...f, Rooms: e.target.value }))} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" 
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* ĐÃ XÓA PHẦN SORTBY Ở ĐÂY */}
+
                 </div>
 
-                <div className="sm:col-span-2 flex gap-2 mt-2">
-                  <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Tìm kiếm</button>
-                  <button type="button" onClick={() => { setFilters({ Location: '', CheckInDate: '', CheckOutDate: '', Adults: '', Children: '', Rooms: '', Page: '', PageSize: '', SortBy: '' }); setQuery(''); setResults(null); }} className="w-full border border-gray-300 py-2 rounded">Xóa</button>
+                <div className="flex gap-3 mt-6">
+                  <button type="button" onClick={() => { 
+                    setFilters({ Location: '', CheckInDate: '', CheckOutDate: '', Adults: '', Children: '', Rooms: '', Page: '', PageSize: '' }); 
+                    setQuery(''); 
+                    setResults(null); 
+                  }} className="w-1/3 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium">
+                    Xóa bộ lọc
+                  </button>
+                  <button type="submit" className="w-2/3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium shadow-sm">
+                    Tìm kiếm
+                  </button>
                 </div>
               </form>
             </div>
@@ -374,7 +402,7 @@ const Search = () => {
         </div>
       )}
 
-      {/* Modal chi tiết khách sạn (Chỉ mở khi selectedHotel có dữ liệu) */}
+      {/* Modal chi tiết khách sạn */}
       {selectedHotel && (
         <HotelDetails hotel={selectedHotel} onClose={() => setSelectedHotel(null)} onBooking={() => {
           setSelectedHotel(null);
