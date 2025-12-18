@@ -1,5 +1,6 @@
 import './App.css'
 import Header from './components/Header/Header'
+import Search from './components/Search/Search'
 import Content from './components/Content/Content'
 import PaymentPage from './components/CustomerFeatures/PaymentPage'
 import HeaderForCustomer from './components/Header/HeaderForCustomer'
@@ -82,6 +83,7 @@ function App() {
       <Route path="/" element={ 
         <>
           <Header onLogin={handleLogin} />
+          <Search />
           <Content />
         </>
       } />
@@ -90,6 +92,7 @@ function App() {
       <Route path="/customer" element={
         <>
           <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
+          <Search />
           <Content />
         </>
       } />
