@@ -25,17 +25,21 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const originalRequest = err.config;
+
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('userId');
+
+      alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+
+      window.location.href = '/?showLogin=1'; 
       
-      alert('Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại!');
-      
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
     }
+    
     return Promise.reject(err);
   }
 );

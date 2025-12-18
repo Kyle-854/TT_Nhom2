@@ -6,8 +6,12 @@ import HeaderForCustomer from './components/Header/HeaderForCustomer'
 import HeaderForAdmin from './components/Header/HeaderForAdmin'
 import HeaderForHotel from './components/Header/HeaderForHotel'
 import ContentForHotel from './components/Content/ContentForHotel'
+import ContentForAdmin from './components/Content/ContentForAdmin'
 import ChangePassword from './components/CustomerFeatures/ChangePassword'
 import Profile from './components/CustomerFeatures/Profile'
+import HotelManagement from './components/AdminFeatures/HotelManagement'
+import AmenitiesManagement from './components/AdminFeatures/AmenitiesManagement'
+import UserManagement from './components/AdminFeatures/UserManagement'
 import { logout } from './serviece/ApiAuth'
 
 import { useState, useEffect } from 'react'
@@ -90,7 +94,7 @@ function App() {
         </>
       } />
 
-      <Route path="/payment" element={
+      <Route path="/customer/payment" element={
         userRole === 'customer' ? (
           <>
             <HeaderForCustomer onLogout={handleLogout} userFullName={userFullName} />
@@ -131,9 +135,33 @@ function App() {
       <Route path="/admin" element={
         <>
           <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
+          <ContentForAdmin />
+        </>
+      } />
+
+      <Route path="/admin/hotel-management" element={
+        <>
+          <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
+          <HotelManagement />
+        </>
+      } />
+
+      <Route path="/admin/amenities-management" element={
+        <>
+          <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
+          <AmenitiesManagement />
+        </>
+      } />
+
+      <Route path="/admin/user-management" element={
+        <>
+          <HeaderForAdmin onLogout={handleLogout} userFullName={userFullName} />
+          <UserManagement />
         </>
       } />
       
+
+//...
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
