@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Header.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login, register, forgotPassword, resetPassword } from '../../serviece/ApiAuth';
-import Search from '../Search/Search';
 
 const Header = ({ onLogin }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,12 +9,10 @@ const Header = ({ onLogin }) => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
-
   const [emailOrPhoneNumber, setEmailOrPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
-
 
   const [registerFullName, setRegisterFullName] = useState('');
   const [registerPhone, setRegisterPhone] = useState('');
@@ -26,12 +23,10 @@ const Header = ({ onLogin }) => {
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [forgotIdentifier, setForgotIdentifier] = useState('');
   const [isForgotLoading, setIsForgotLoading] = useState(false);
   const [forgotError, setForgotError] = useState('');
-
 
   const [resetCode, setResetCode] = useState(''); 
   const [newPasswordForReset, setNewPasswordForReset] = useState('');
@@ -40,6 +35,8 @@ const Header = ({ onLogin }) => {
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState('');
 
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -57,10 +54,8 @@ const Header = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login failed:', error);
-
       let message = 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.';
       if (error?.body) {
-
         message = error.body?.message || error.body?.error || JSON.stringify(error.body);
       } else if (error?.message) {
         try {
@@ -75,16 +70,12 @@ const Header = ({ onLogin }) => {
     }
   };
 
-  const navigate = useNavigate();
-
-
-  const location = useLocation();
   useEffect(() => {
     try {
       const params = new URLSearchParams(location.search);
       if (params.get('showLogin') === '1') setIsLoginOpen(true);
     } catch (e) {
-     
+
     }
   }, [location.search]);
 
@@ -93,29 +84,12 @@ const Header = ({ onLogin }) => {
     setRegisterError('');
     setRegisterSuccess('');
 
-  
-    if (!registerFullName.trim()) {
-      setRegisterError('Vui lòng nhập họ và tên.');
-      return;
-    }
-    if (!registerPhone.trim()) {
-      setRegisterError('Vui lòng nhập số điện thoại.');
-      return;
-    }
-    if (!registerEmail.trim()) {
-      setRegisterError('Vui lòng nhập email.');
-      return;
-    }
-    if (!registerPassword.trim()) {
-      setRegisterError('Vui lòng nhập mật khẩu.');
-      return;
-    }
-    if (!registerConfirmPassword.trim()) {
-      setRegisterError('Vui lòng nhập xác nhận mật khẩu.');
-      return;
-    }
+    if (!registerFullName.trim()) { setRegisterError('Vui lòng nhập họ và tên.'); return; }
+    if (!registerPhone.trim()) { setRegisterError('Vui lòng nhập số điện thoại.'); return; }
+    if (!registerEmail.trim()) { setRegisterError('Vui lòng nhập email.'); return; }
+    if (!registerPassword.trim()) { setRegisterError('Vui lòng nhập mật khẩu.'); return; }
+    if (!registerConfirmPassword.trim()) { setRegisterError('Vui lòng nhập xác nhận mật khẩu.'); return; }
 
-  
     if (registerPassword !== registerConfirmPassword) {
       setRegisterError('Mật khẩu và xác nhận mật khẩu không trùng khớp.');
       return;
@@ -124,7 +98,6 @@ const Header = ({ onLogin }) => {
     setIsRegisterLoading(true);
 
     try {
-  
       await register({
         fullName: registerFullName,
         phone: registerPhone,
@@ -132,8 +105,6 @@ const Header = ({ onLogin }) => {
         password: registerPassword,
       });
       
-
-    
       setRegisterSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
       setRegisterFullName('');
       setRegisterPhone('');
@@ -141,7 +112,6 @@ const Header = ({ onLogin }) => {
       setRegisterPassword('');
       setRegisterConfirmPassword('');
 
-    
       setTimeout(() => {
         setIsRegisterOpen(false);
         setIsLoginOpen(true);
@@ -174,7 +144,6 @@ const Header = ({ onLogin }) => {
     setForgotError('');
     try {
       await forgotPassword(forgotIdentifier);
-    
       setIsForgotPasswordOpen(false);
       setIsResetPasswordOpen(true);
     } catch (error) {
@@ -200,10 +169,9 @@ const Header = ({ onLogin }) => {
 
     setIsResetting(true);
     try {
-   
       await resetPassword({ token: resetCode, newPassword: newPasswordForReset });
       setResetSuccess('Mật khẩu đã được đặt lại thành công! Vui lòng đăng nhập lại.');
-     
+      
       setTimeout(() => {
         setIsResetPasswordOpen(false);
         setIsLoginOpen(true);
@@ -219,51 +187,46 @@ const Header = ({ onLogin }) => {
     <>
       <header className="sticky top-0 left-0 w-full bg-white shadow-md z-40 px-4 sm:px-8 py-4">
         <div className="w-full flex flex-col gap-4">
-          {/* Dòng trên: Tên web và các nút */}
-          <div className="w-full grid grid-cols-3 items-center md:grid-cols-[auto_1fr_auto]">
-            {/* Phần bên trái: Tên App (Desktop) */}
+
+          <div className="w-full grid grid-cols-3 items-center">
+            
+            {/* Phần bên trái: Để trống để cân bằng grid */}
             <div className="justify-self-start">
-              {/* Tên App (Desktop) */}
-              <Link to="/" className="hidden md:block text-2xl font-bold text-blue-600">HotelBooking</Link>
-              <div className="md:hidden w-6 h-6"></div> {/* Placeholder để căn giữa title trên mobile */}
+
             </div>
 
-            {/* Phần giữa: Tên App (Mobile) / Thanh tìm kiếm (Desktop) */}
-            <div className="md:flex md:justify-center md:px-8">
-              {/* Tên App (Mobile) */}
-              <div className="md:hidden text-center justify-self-center">
-                <Link to="/" className="text-2xl font-bold text-blue-600">HotelBooking</Link>
-              </div>
-              {/* Thanh tìm kiếm (Desktop) */}
-              <div className="hidden md:flex w-[80%]">
-                <Search />
-              </div>
+            {/* Phần giữa: Tên App (Luôn căn giữa) */}
+            <div className="justify-self-center">
+              <Link to="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                HotelBooking
+              </Link>
             </div>
 
             {/* Phần bên phải: Đăng nhập (Desktop) / Nút hamburger (Mobile) */}
             <div className="justify-self-end">
               {/* Nút đăng nhập (Desktop) */}
               <div className="hidden md:flex">
-                <button onClick={() => setIsLoginOpen(true)} className="px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">Đăng nhập</button>
+                <button onClick={() => setIsLoginOpen(true)} className="px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
+                  Đăng nhập
+                </button>
               </div>
               {/* Nút hamburger (Mobile) */}
               <div className="md:hidden justify-self-end">
                 <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                  </svg>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Thanh tìm kiếm (Mobile) */}
-          <div className="w-full md:hidden">
-            <Search />
-          </div>
-
           {/* Menu mobile (nếu có) */}
           {isMenuOpen && (
-            <div className="md:hidden space-y-2">
-              <button onClick={() => { setIsLoginOpen(true); setIsMenuOpen(false); }} className="w-full px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">Đăng nhập</button>
+            <div className="md:hidden space-y-2 pt-2 border-t mt-2">
+              <button onClick={() => { setIsLoginOpen(true); setIsMenuOpen(false); }} className="w-full px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
+                Đăng nhập
+              </button>
             </div>
           )}
         </div>
@@ -272,7 +235,7 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Đăng nhập --- */}
       {isLoginOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex justify-center items-center p-4"
           onClick={() => { setIsLoginOpen(false); navigate('/'); }}
         >
           <div
@@ -332,7 +295,7 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Đăng ký --- */}
       {isRegisterOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex justify-center items-center p-4"
           onClick={() => { setIsRegisterOpen(false); navigate('/'); }}
         >
           <div
@@ -424,7 +387,7 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Quên mật khẩu --- */}
       {isForgotPasswordOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex justify-center items-center p-4"
           onClick={() => { setIsForgotPasswordOpen(false); navigate('/'); }}
         >
           <div
@@ -469,7 +432,7 @@ const Header = ({ onLogin }) => {
       {/* --- Dialog Reset Mật khẩu --- */}
       {isResetPasswordOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex justify-center items-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex justify-center items-center p-4"
           onClick={() => { setIsResetPasswordOpen(false); navigate('/'); }}
         >
           <div

@@ -29,7 +29,9 @@ apiClient.interceptors.response.use(
   (err) => {
     const originalRequest = err.config;
 
-    if (err.response?.status === 401 && !originalRequest._retry) {
+    const isLoginRequest = originalRequest.url.includes('/login') || originalRequest.url.includes('auth');
+
+    if (err.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
       originalRequest._retry = true;
 
       localStorage.removeItem('authToken');
@@ -39,9 +41,8 @@ apiClient.interceptors.response.use(
       alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
 
       window.location.href = '/?showLogin=1'; 
-      
+      return Promise.reject(err);
     }
-    
     return Promise.reject(err);
   }
 );
