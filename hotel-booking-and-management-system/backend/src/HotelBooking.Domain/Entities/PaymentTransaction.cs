@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HotelBooking.Domain.Entities;
+﻿namespace HotelBooking.Domain.Entities;
 
 public partial class PaymentTransaction
 {
@@ -22,6 +19,8 @@ public partial class PaymentTransaction
     public DateTime? PaidAt { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
 
     public string? Note { get; set; }
 

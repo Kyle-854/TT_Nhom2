@@ -33,6 +33,11 @@ backend/**/out/
 # Configuration 
 hotel-booking-and-management-system/backend/src/HotelBooking.API/appsettings.Development.json
 hotel-booking-and-management-system/backend/src/HotelBooking.API/appsettings.json
+hotel-booking-and-management-system/backend/src/HotelBooking.API/google-credentials.json
+hotel-booking-and-management-system/backend/.dockerignore
+hotel-booking-and-management-system/backend/Dockerfile
+hotel-booking-and-management-system/backend/docker-compose.yml
+
 
 # NuGet packages
 *.nupkg

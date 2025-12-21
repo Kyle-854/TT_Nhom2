@@ -32,5 +32,15 @@ namespace HotelBooking.Infrastructure.Repositories
             bool usedInRoomType = await _context.Set<RoomTypeAmenity>().AnyAsync(x => x.AmenityId == id);
             return usedInRoomType;
         }
+
+        public async Task<bool> AreAllAmenitiesValidAsync(List<int> amenityIds)
+        {
+            if (amenityIds == null || !amenityIds.Any()) return true;
+
+            int count = await _context.Amenities
+                .CountAsync(a => amenityIds.Contains(a.AmenityId));
+
+            return count == amenityIds.Distinct().Count();
+        }
     }
 }

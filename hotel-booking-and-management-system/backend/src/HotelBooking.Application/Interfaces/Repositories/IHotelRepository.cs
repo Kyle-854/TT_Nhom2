@@ -14,5 +14,6 @@ namespace HotelBooking.Application.Interfaces.Repositories
         Task<(List<HotelSearchResultDto> Items, int TotalRecords)> SearchHotelsAsync(HotelSearchRequestDto request);
         Task<List<SearchSuggestionDto>> GetSuggestionsAsync(string query);
         Task<(List<Hotel> Items, int TotalItems)> GetHotelsForAdminAsync(AdminHotelFilterDto filter);
+        Task<bool> ExistsBySlugAsync(string slug);
     }
 }

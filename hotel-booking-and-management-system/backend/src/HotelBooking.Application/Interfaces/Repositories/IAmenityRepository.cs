@@ -8,5 +8,6 @@ namespace HotelBooking.Application.Interfaces.Repositories
 
         Task<bool> IsNameExistsForUpdateAsync(int id, string name);
         Task<bool> IsAmenityInUseAsync(int id);
+        Task<bool> AreAllAmenitiesValidAsync(List<int> amenityIds);
     }
 }

@@ -69,6 +69,34 @@ namespace HotelBooking.Application.Mappings
                            opt => opt.MapFrom(src => src.OwnerUser != null ? src.OwnerUser.Phone : null))
                 .ForMember(dest => dest.TotalBookings,
                            opt => opt.MapFrom(src => src.Bookings != null ? src.Bookings.Count : 0));
+
+            CreateMap<Hotel, PartnerHotelSummaryDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.HotelId))
+                .ForMember(dest => dest.ThumbnailUrl,
+                    opt => opt.MapFrom(src => src.Medias.FirstOrDefault(m => m.IsMain == true).Url));
+
+            CreateMap<Hotel, PartnerHotelDetailDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.HotelId))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Medias))
+                .ForMember(dest => dest.Amenities,
+                    opt => opt.MapFrom(src => src.HotelAmenities.Select(ha => ha.Amenity)));
+
+            CreateMap<Media, HotelMediaDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MediaId));
+
+            CreateMap<CreateHotelDto, Hotel>()
+                .ForMember(dest => dest.HotelId, opt => opt.Ignore())
+                .ForMember(dest => dest.Slug, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+            CreateMap<UpdateHotelInfoDto, Hotel>()
+                .ForMember(dest => dest.HotelId, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Slug, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }

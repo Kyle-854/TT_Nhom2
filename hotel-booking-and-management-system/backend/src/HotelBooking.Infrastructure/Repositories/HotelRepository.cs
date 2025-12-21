@@ -26,8 +26,10 @@ namespace HotelBooking.Infrastructure.Repositories
         public async Task<IEnumerable<Hotel>> GetHotelsByOwnerIdAsync(long ownerUserId)
         {
             return await _context.Hotels
-                                 .Where(h => h.OwnerUserId == ownerUserId)
-                                 .ToListAsync();
+                                .Include(h => h.Medias.Where(m => m.IsMain))
+                                .Where(h => h.OwnerUserId == ownerUserId)
+                                .OrderByDescending(h => h.CreatedAt)
+                                .ToListAsync();
         }
 
         public async Task<Hotel?> GetHotelWithDetailsAsync(long hotelId)
@@ -206,6 +208,11 @@ namespace HotelBooking.Infrastructure.Repositories
                 .ToListAsync();
 
             return (items, totalItems);
+        }
+
+        public async Task<bool> ExistsBySlugAsync(string slug)
+        {
+            return await _context.Hotels.AnyAsync(h => h.Slug == slug);
         }
     }
 }

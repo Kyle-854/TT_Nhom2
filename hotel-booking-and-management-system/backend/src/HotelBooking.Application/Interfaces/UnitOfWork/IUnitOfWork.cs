@@ -15,6 +15,8 @@ namespace HotelBooking.Application.Interfaces.UnitOfWork
         IPromotionRepository PromotionRepo { get; }
         IRoleRepository RoleRepo { get; }
         IPaymentRepository PaymentRepo { get; }
+        IMediaRepository MediaRepo { get; }
+        IHotelAmenityRepository HotelAmenityRepo { get; }
 
         IGenericRepository<Invoice> Invoices { get; }
         IGenericRepository<Media> Medias { get; }

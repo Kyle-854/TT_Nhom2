@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace HotelBooking.Application.Authentication
+namespace HotelBooking.Application.Utilities
 {
     public class JwtTokenGenerator
     {

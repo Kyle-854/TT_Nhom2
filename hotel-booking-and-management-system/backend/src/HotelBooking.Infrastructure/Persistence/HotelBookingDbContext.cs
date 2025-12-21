@@ -336,6 +336,9 @@ public partial class HotelBookingDbContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP(6)")
                 .HasColumnType("timestamp(6)");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("timestamp(6)");
+
             entity.Property(e => e.Currency).HasMaxLength(10);
             entity.Property(e => e.Note).HasMaxLength(1000);
             entity.Property(e => e.PaidAt).HasColumnType("timestamp(6)");

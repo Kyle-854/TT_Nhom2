@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
-using HotelBooking.Application.Authentication;
+using HotelBooking.Application.Utilities;
 using HotelBooking.Application.DataTransferObjects.Auth;
 using HotelBooking.Application.DataTransferObjects.User;
 using HotelBooking.Application.Interfaces.UnitOfWork;
