@@ -128,7 +128,7 @@ namespace HotelBooking.API
             {
                 options.SwaggerDoc("users", new OpenApiInfo { Title = "Users API", Version = "v1" });
                 options.SwaggerDoc("admins", new OpenApiInfo { Title = "Admin API", Version = "v1" });
-                options.SwaggerDoc("hotels", new OpenApiInfo { Title = "Hotel API", Version = "v1" });
+                options.SwaggerDoc("partners", new OpenApiInfo { Title = "Partner API", Version = "v1" });
 
                 options.DocInclusionPredicate((doc, api) =>
                 {
@@ -176,7 +176,7 @@ namespace HotelBooking.API
                 {
                     c.SwaggerEndpoint("/swagger/users/swagger.json", "User API");
                     c.SwaggerEndpoint("/swagger/admins/swagger.json", "Admin API");
-                    c.SwaggerEndpoint("/swagger/hotels/swagger.json", "Hotel API");
+                    c.SwaggerEndpoint("/swagger/partners/swagger.json", "Partner API");
                 });
             }
 
