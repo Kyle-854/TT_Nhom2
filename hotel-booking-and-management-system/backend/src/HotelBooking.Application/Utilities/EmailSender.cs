@@ -4,7 +4,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace HotelBooking.Application.Authentication
+namespace HotelBooking.Application.Utilities
 {
     public class EmailSender
     {

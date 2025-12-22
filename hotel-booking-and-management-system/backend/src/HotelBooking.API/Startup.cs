@@ -1,11 +1,13 @@
 ﻿using HotelBooking.API.Middlewares;
-using HotelBooking.Application.Authentication;
 using HotelBooking.Application.Interfaces.Repositories;
+using HotelBooking.Application.Interfaces.Storage;
 using HotelBooking.Application.Interfaces.UnitOfWork;
 using HotelBooking.Application.Mappings;
 using HotelBooking.Application.Services;
+using HotelBooking.Application.Utilities;
 using HotelBooking.Infrastructure.Persistence;
 using HotelBooking.Infrastructure.Repositories;
+using HotelBooking.Infrastructure.Storage;
 using HotelBooking.Infrastructure.UnitOfWork;
 using HotelBooking.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,6 +46,9 @@ namespace HotelBooking.API
             // EmailSettings
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
+            // CloudinarySettings
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+
             // Logging
             services.AddLogging();
 
@@ -58,8 +63,8 @@ namespace HotelBooking.API
             services.AddAutoMapper(typeof(PaymentProfile).Assembly);
 
             services.AddScoped<JwtTokenGenerator>();
-
             services.AddScoped<EmailSender>();
+            services.AddScoped<IStorageService, CloudinaryStorageService>();
 
             services.AddScoped<AmenityService>();
             services.AddScoped<AuthService>();
@@ -73,6 +78,8 @@ namespace HotelBooking.API
             services.AddScoped<AdminUserService>();
             services.AddScoped<AdminHotelModerationService>();
 
+            services.AddScoped<PartnerHotelService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -84,7 +91,8 @@ namespace HotelBooking.API
             services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
             services.AddScoped<IRoomInventoryRepository, RoomInventoryRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
-
+            services.AddScoped<IMediaRepository, MediaRepository>();
+            services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
 
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -120,6 +128,7 @@ namespace HotelBooking.API
             {
                 options.SwaggerDoc("users", new OpenApiInfo { Title = "Users API", Version = "v1" });
                 options.SwaggerDoc("admins", new OpenApiInfo { Title = "Admin API", Version = "v1" });
+                options.SwaggerDoc("partners", new OpenApiInfo { Title = "Partner API", Version = "v1" });
 
                 options.DocInclusionPredicate((doc, api) =>
                 {
@@ -167,6 +176,7 @@ namespace HotelBooking.API
                 {
                     c.SwaggerEndpoint("/swagger/users/swagger.json", "User API");
                     c.SwaggerEndpoint("/swagger/admins/swagger.json", "Admin API");
+                    c.SwaggerEndpoint("/swagger/partners/swagger.json", "Partner API");
                 });
             }
 

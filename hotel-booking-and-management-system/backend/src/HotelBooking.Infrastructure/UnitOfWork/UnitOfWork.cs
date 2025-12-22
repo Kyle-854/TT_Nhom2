@@ -20,6 +20,8 @@ namespace HotelBooking.Infrastructure.UnitOfWork
         private IPromotionRepository _promotionrepo;
         private IRoleRepository _rolerepo;
         private IPaymentRepository _paymentrepo;
+        private IMediaRepository _mediarepo;
+        private IHotelAmenityRepository _hotelAmenityrepo;
 
         private IGenericRepository<Invoice> _invoices;
         private IGenericRepository<Media> _medias;
@@ -150,6 +152,30 @@ namespace HotelBooking.Infrastructure.UnitOfWork
                     this._paymentrepo = new PaymentRepository(_context);
                 }
                 return this._paymentrepo;
+            }
+        }
+
+        public IMediaRepository MediaRepo
+        {
+            get
+            {
+                if (this._mediarepo == null)
+                {
+                    this._mediarepo = new MediaRepository(_context);
+                }
+                return this._mediarepo;
+            }
+        }
+
+        public IHotelAmenityRepository HotelAmenityRepo
+        {
+            get
+            {
+                if (this._hotelAmenityrepo == null)
+                {
+                    this._hotelAmenityrepo = new HotelAmenityRepository(_context);
+                }
+                return this._hotelAmenityrepo;
             }
         }
 

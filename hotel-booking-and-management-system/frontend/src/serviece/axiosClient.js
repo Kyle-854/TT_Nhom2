@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-  ? '' 
-  : 'http://160.191.245.177:8000';
+const API_BASE_URL = '';
 
 
 const apiClient = axios.create({
