@@ -13,6 +13,7 @@ import Profile from './components/CustomerFeatures/Profile'
 import HotelManagement from './components/AdminFeatures/HotelManagement'
 import AmenitiesManagement from './components/AdminFeatures/AmenitiesManagement'
 import UserManagement from './components/AdminFeatures/UserManagement'
+import HotelList from './components/PartnerFeatures/HotelList'
 import { logout } from './serviece/ApiAuth'
 
 import { useState, useEffect } from 'react'
@@ -131,6 +132,13 @@ function App() {
         <>
           <HeaderForHotel userFullName={userFullName} onLogout={handleLogout} />
           <ContentForHotel onLogout={handleLogout} />
+        </>
+      } />
+
+      <Route path="/hotelowner/hotel-list" element={
+        <>
+          <HeaderForHotel userFullName={userFullName} onLogout={handleLogout} />
+          <HotelList />
         </>
       } />
       
