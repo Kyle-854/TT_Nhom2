@@ -1,4 +1,5 @@
-﻿using HotelBooking.Application.DataTransferObjects.Hotel;
+﻿using HotelBooking.Application.DataTransferObjects.Amenity;
+using HotelBooking.Application.DataTransferObjects.Hotel;
 using HotelBooking.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,13 @@ namespace HotelBooking.API.Controllers
             long currentUserId = GetUserIdFromClaims();
             IEnumerable<PartnerHotelSummaryDto>? result = await _hotelService.GetMyHotelsAsync(currentUserId);
 
+            return Ok(result);
+        }
+
+        [HttpGet("amenities-lookup")]
+        public async Task<IActionResult> GetAmenityLookup()
+        {
+            List<AmenityDto>? result = await _hotelService.GetAllAmenitiesAsync();
             return Ok(result);
         }
 

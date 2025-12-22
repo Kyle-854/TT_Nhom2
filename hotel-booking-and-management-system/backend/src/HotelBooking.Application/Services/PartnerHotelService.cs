@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HotelBooking.Application.DataTransferObjects.Amenity;
 using HotelBooking.Application.DataTransferObjects.Hotel;
 using HotelBooking.Application.Interfaces.Storage;
 using HotelBooking.Application.Interfaces.UnitOfWork;
@@ -24,6 +25,13 @@ namespace HotelBooking.Application.Services
         {
             IEnumerable<Hotel>? hotels = await _unitOfWork.HotelRepo.GetHotelsByOwnerIdAsync(ownerUserId);
             return _mapper.Map<IEnumerable<PartnerHotelSummaryDto>>(hotels);
+        }
+
+        public async Task<List<AmenityDto>> GetAllAmenitiesAsync()
+        {
+            IEnumerable<Amenity>? amenities = await _unitOfWork.AmenitieRepo.GetAllAsync();
+
+            return _mapper.Map<List<AmenityDto>>(amenities);
         }
 
         public async Task<PartnerHotelDetailDto> GetHotelDetailAsync(long hotelId, long ownerUserId)
