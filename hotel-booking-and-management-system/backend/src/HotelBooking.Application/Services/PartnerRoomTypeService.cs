@@ -70,6 +70,14 @@ namespace HotelBooking.Application.Services
                 throw new UnauthorizedAccessException("Bạn không có quyền thực hiện thao tác trên khách sạn này.");
             }
 
+            foreach(RoomType existingRoomType in hotel.RoomTypes)
+            {
+                if (existingRoomType.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Loại phòng với tên '{request.Name}' đã tồn tại trong khách sạn này.");
+                }
+            }
+
             RoomType? roomType = _mapper.Map<RoomType>(request);
             roomType.HotelId = hotelId;
             roomType.CreatedAt = DateTime.UtcNow;
