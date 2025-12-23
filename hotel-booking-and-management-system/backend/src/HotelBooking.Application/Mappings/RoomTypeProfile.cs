@@ -18,9 +18,10 @@ namespace HotelBooking.Application.Mappings
 
             CreateMap<RoomType, RoomTypeDto>()
                 .ForMember(dest => dest.RoomTypeId, opt => opt.MapFrom(src => src.RoomTypeId))
+                .ForMember(dest => dest.Capacity,opt => opt.MapFrom(src => src.MaxAdults))
+                .ForMember(dest => dest.PricePerNight,opt => opt.MapFrom(src => src.DefaultPrice))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Media))
-                .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src =>
-                    src.RoomTypeAmenities.Select(rta => rta.Amenity)));
+                .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src =>src.RoomTypeAmenities.Select(rta => rta.Amenity)));
 
 
             CreateMap<CreateRoomTypeRequestDto, RoomType>()
