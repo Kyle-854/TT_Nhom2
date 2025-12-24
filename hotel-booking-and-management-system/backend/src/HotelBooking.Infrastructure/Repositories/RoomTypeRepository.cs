@@ -27,5 +27,31 @@ namespace HotelBooking.Infrastructure.Repositories
                     .ThenInclude(rta => rta.Amenity)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<RoomType>> GetAllRoomTypesByHotelAsync(long hotelId)
+        {
+            bool hotelExists = await _context.Hotels.AnyAsync(h => h.HotelId == hotelId);
+            if (!hotelExists)
+            {
+                return Enumerable.Empty<RoomType>();
+            }
+
+            return await _context.RoomTypes
+                .Where(rt => rt.HotelId == hotelId)
+                .Include(rt => rt.Media)
+                .Include(rt => rt.RoomTypeAmenities)
+                    .ThenInclude(rta => rta.Amenity)
+                .OrderByDescending(rt => rt.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<RoomType?> GetRoomTypeWithDetailsAsync(int id)
+        {
+            return await _context.RoomTypes
+                .Include(rt => rt.Media)
+                .Include(rt => rt.RoomTypeAmenities)
+                    .ThenInclude(rta => rta.Amenity)
+                .FirstOrDefaultAsync(rt => rt.RoomTypeId == id);
+        }
     }
 }

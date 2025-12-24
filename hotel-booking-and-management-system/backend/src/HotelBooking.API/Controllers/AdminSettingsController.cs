@@ -22,7 +22,7 @@ namespace HotelBooking.API.Controllers
         [HttpGet("amenities")]
         public async Task<IActionResult> GetAllAmenities()
         {
-            var result = await _amenityService.GetAllAmenitiesAsync();
+            IEnumerable<AmenityDto>? result = await _amenityService.GetAllAmenitiesAsync();
             return Ok(result);
         }
 

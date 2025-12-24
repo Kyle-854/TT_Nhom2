@@ -101,7 +101,7 @@ namespace HotelBooking.Application.Services
 
         public async Task<string> UploadHotelImageAsync(long hotelId, long ownerUserId, UploadHotelImageDto dto)
         {
-            var hotel = await _unitOfWork.HotelRepo.GetByIdAsync(hotelId);
+            Hotel? hotel = await _unitOfWork.HotelRepo.GetByIdAsync(hotelId);
             if (hotel == null)
             {
                 throw new KeyNotFoundException($"Không tìm thấy khách sạn với ID: {hotelId}");
@@ -128,8 +128,7 @@ namespace HotelBooking.Application.Services
             }
             catch (Exception ex)
             {
-                //throw new InvalidOperationException("Có lỗi xảy ra trong quá trình lưu trữ hình ảnh. Vui lòng thử lại.");
-                throw new InvalidOperationException($"Google Drive Error: {ex.Message}");
+                throw new InvalidOperationException("Có lỗi xảy ra trong quá trình lưu trữ hình ảnh. Vui lòng thử lại.");
             }
 
             Media media = new Media

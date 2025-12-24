@@ -18,5 +18,12 @@ namespace HotelBooking.Infrastructure.Repositories
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Media>> GetByRoomTypeIdAsync(int roomTypeId)
+        {
+            return await _context.Media
+                .Where(m => m.RoomTypeId == roomTypeId)
+                .ToListAsync();
+        }
     }
 }
