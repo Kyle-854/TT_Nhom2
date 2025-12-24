@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getMyHotels, getDetail, createHotel, updateInfo, uploadImage, getAmenitiesLookup, updateAmenities } from '../../serviece/ApiPartnerHotel'; 
 
 
@@ -41,6 +42,7 @@ const ImageViewer = ({ src, alt, onClose }) => {
 
 
 const HotelList = () => {
+  const navigate = useNavigate();
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -80,11 +82,10 @@ const HotelList = () => {
     isMain: false
   });
 
-
   const [isAmenityModalOpen, setIsAmenityModalOpen] = useState(false);
   const [loadingAmenities, setLoadingAmenities] = useState(false);
-  const [allAmenities, setAllAmenities] = useState([]);
-  const [selectedAmenityIds, setSelectedAmenityIds] = useState([]);
+  const [allAmenities, setAllAmenities] = useState([]); 
+  const [selectedAmenityIds, setSelectedAmenityIds] = useState([]); 
   const [amenityHotelId, setAmenityHotelId] = useState(null);
   const [savingAmenities, setSavingAmenities] = useState(false);
 
@@ -256,7 +257,6 @@ const HotelList = () => {
     }
   };
 
-
   const handleOpenAmenities = async (id, e) => {
     e.stopPropagation();
     setAmenityHotelId(id);
@@ -310,6 +310,11 @@ const HotelList = () => {
     } finally {
       setSavingAmenities(false);
     }
+  };
+
+  const handleManageRooms = (id, e) => {
+    e.stopPropagation();
+    navigate(`/hotelowner/hotel-list/room-type`, { state: { hotelId: id } });
   };
 
   const formatDate = (dateString) => {
@@ -408,24 +413,31 @@ const HotelList = () => {
                     {formatDate(hotel.createdAt)}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
-                    {/* Nút Tiện Nghi */}
+
+                    <button 
+                      onClick={(e) => handleManageRooms(hotel.id, e)}
+                      className="text-orange-600 hover:text-orange-900 bg-orange-50 hover:bg-orange-100 px-3 py-1 rounded border border-orange-200 transition mr-2"
+                    >
+                      Phòng
+                    </button>
+
                     <button 
                       onClick={(e) => handleOpenAmenities(hotel.id, e)}
                       className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded border border-indigo-200 transition mr-2"
                     >
                       Tiện nghi
                     </button>
-                    {/* Nút Ảnh */}
+
                     <button 
                       onClick={(e) => handleOpenUpload(hotel.id, e)}
                       className="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded border border-purple-200 transition mr-2"
                     >
                       Ảnh
                     </button>
-                    {/* Nút Sửa */}
+
                     <button 
                       onClick={(e) => handleOpenEdit(hotel.id, e)}
-                      className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded border border-blue-200 transition"
+                      className="text-yellow-600 hover:text-yellow-900 bg-yellow-50 hover:bg-yellow-100 px-3 py-1 rounded border border-yellow-200 transition"
                     >
                       Sửa
                     </button>
@@ -565,8 +577,8 @@ const HotelList = () => {
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/50" style={{ zIndex: 55 }}>
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-auto flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-xl font-bold text-black">Cập nhật khách sạn</h3>
+            <div className="flex items-center justify-between p-4 border-b bg-yellow-50">
+              <h3 className="text-xl font-bold text-yellow-800">Cập nhật khách sạn</h3>
               <button onClick={() => setIsEditModalOpen(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
             </div>
             <form onSubmit={handleUpdateHotel} className="p-6 space-y-4">
